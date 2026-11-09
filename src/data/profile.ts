@@ -3,7 +3,7 @@ export interface ProjectItem {
   title: string;
   period: string;
   role: string;
-  category: 'data' | 'ai' | 'web' | 'game';
+  category: 'data' | 'ai' | 'web' | 'game' | 'tool';
   categoryLabel: string;
   githubUrl: string;
   articleUrl?: string;
@@ -18,7 +18,7 @@ export interface ProjectItem {
 export interface TechToolItem {
   id: string;
   name: string;
-  category: 'data' | 'ai' | 'db' | 'infra' | 'game';
+  category: 'data' | 'ai' | 'db' | 'infra' | 'game' | 'tool';
   categoryLabel: string;
   purpose: string;
   usedIn: string;
@@ -288,6 +288,39 @@ export const PROJECTS: ProjectItem[] = [
     techStack: ['Node.js', 'Express', 'Socket.io', 'tiktok-live-connector', 'Phaser 3', 'Vite', 'Web Audio API', 'OBS', 'JavaScript'],
     status: 'Đã triển khai trên GitHub',
   },
+  {
+    id: 'fb-note-vanit',
+    title: 'FB NOTE - VanIT (Extension Mở Khóa Facebook Notes)',
+    period: '2026',
+    role: 'Tác giả & Nhà phát triển Extension · Mã nguồn mở',
+    category: 'tool',
+    categoryLabel: 'Extension & Web Tool',
+    githubUrl: 'https://github.com/DinhVen/FB-NOTE-VanIT',
+    articleUrl: '/blog/fb-note-vanit-extension-mo-khoa-facebook-notes',
+    gallery: [
+      { src: '/images/projects/fb-note/fb-note-composer.png', caption: 'FB NOTE - VanIT: Giao diện soạn thảo hiện đại, đếm 600 ký tự và xem trước thời gian thực' },
+      { src: '/images/projects/fb-note/fb-note-history.png', caption: 'Lịch sử lưu ghi chú cũ: 1-click dùng lại bài viết và bài hát đã chọn' },
+      { src: '/images/projects/fb-note/fb-note-schedule.png', caption: 'Hẹn giờ đăng tự động và cơ chế Auto-repost 1-10 lần qua Chrome Alarms API' },
+    ],
+    summary:
+      'Chrome Extension (Manifest V3) mã nguồn mở giúp mở khóa toàn bộ giới hạn của Facebook Notes: viết dài tới 600 ký tự (gấp 10 lần mặc định), cắt nhạc 30s trực quan với sóng âm trên PC, hẹn giờ đăng tự động, tự động đăng lại 1–10 lần và gửi tin nhắn bí mật mã hóa Unicode tàng hình an toàn 100% không lo checkpoint.',
+    highlights: [
+      'Viết ghi chú tới 600 ký tự (mặc định chỉ 60 ký tự) kèm bộ đếm tiến trình trực quan theo thời gian thực.',
+      'Tích hợp kho nhạc bản quyền Facebook, nghe thử và kéo thanh sóng âm (waveform) cắt chính xác 30s điệp khúc ngay trên máy tính.',
+      'Hẹn giờ đăng tự động và Auto-repost từ 1 đến 10 lần qua Chrome Alarms API chạy ngầm an toàn.',
+      'Tính năng độc quyền "Tin nhắn ẩn" (Secret Note) mã hóa ký tự Unicode tàng hình (Steganography), chỉ người cài extension mới giải mã được.',
+      'Hoạt động 100% Client-side, không lưu mật khẩu, không gửi dữ liệu ra ngoài, tương thích cả PC và Android (qua Kiwi Browser).',
+    ],
+    architectureFlow: [
+      'Người dùng nhập note / nhạc / tin ẩn',
+      'React 18 + Tailwind Popup UI',
+      'Chrome Storage & Alarms Worker',
+      'Facebook Graph API (Phiên client)',
+      'Ghi chú hiển thị trên Messenger / FB',
+    ],
+    techStack: ['Chrome Extension', 'Manifest V3', 'React 18', 'TypeScript', 'Tailwind CSS', 'Vite', 'Chrome Alarms'],
+    status: 'Đã phát hành v2.0.0 trên GitHub',
+  },
 ];
 
 export const TECH_TOOLS: TechToolItem[] = [
@@ -370,6 +403,16 @@ export const TECH_TOOLS: TechToolItem[] = [
     usedIn: 'Dự án 1, 2, 3 DÔ! (TikTok Live Game)',
     relatedUrl: 'https://github.com/DinhVen/123-do-game',
     tags: ['Node.js', 'Express', 'Socket.io', 'tiktok-live-connector', 'OBS'],
+  },
+  {
+    id: 'chrome-extension-manifest-v3',
+    name: 'Chrome Extension MV3 & React 18 / Tailwind',
+    category: 'tool',
+    categoryLabel: 'Browser Extension & Automation',
+    purpose: 'Kiến trúc tiện ích mở rộng chuẩn Manifest V3, giao diện popup React 18 / Tailwind CSS, lập lịch chạy ngầm bằng Chrome Alarms API và tương tác Graph API client-side.',
+    usedIn: 'Dự án FB NOTE - VanIT (Extension Mở Khóa Facebook Notes)',
+    relatedUrl: 'https://github.com/DinhVen/FB-NOTE-VanIT',
+    tags: ['Chrome Extension', 'Manifest V3', 'React 18', 'Tailwind CSS', 'TypeScript', 'Chrome Alarms'],
   },
 ];
 

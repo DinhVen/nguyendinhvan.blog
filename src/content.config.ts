@@ -7,7 +7,7 @@ const blog = defineCollection({
     title: z.string(),
     description: z.string(),
     pubDate: z.string(),
-    category: z.enum(['data-engineering', 'life', 'future']),
+    category: z.enum(['data-engineering', 'life', 'future', 'tools']),
     categoryLabel: z.string(),
     readingTime: z.string(),
     tags: z.array(z.string()),
