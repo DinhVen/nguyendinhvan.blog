@@ -14,6 +14,8 @@ const quickTags = [
   'SQL Server',
   'Docker',
   'Amazon S3',
+  'Phaser 3',
+  'Socket.io',
 ];
 ---
 
@@ -59,6 +61,9 @@ const quickTags = [
           </button>
           <button type="button" class="filter-tab" data-cat-filter="ai">
             AI & Computer Vision
+          </button>
+          <button type="button" class="filter-tab" data-cat-filter="game">
+            Game & Realtime
           </button>
           <button type="button" class="filter-tab" data-cat-filter="infra">
             Database, Docker & Cloud
@@ -144,6 +149,22 @@ const quickTags = [
             </div>
 
             <p class="project-desc">{project.summary}</p>
+
+            {project.gallery && project.gallery.length > 0 && (
+              <div class="project-gallery" aria-label={`Hình ảnh dự án ${project.title}`}>
+                {project.gallery.map((shot, gIdx) => (
+                  <button
+                    type="button"
+                    class:list={['gallery-shot', { 'gallery-shot-wide': shot.src.includes('mock-dashboard') }]}
+                    data-lightbox-src={shot.src}
+                    data-lightbox-caption={shot.caption}
+                    aria-label={`Xem ảnh ${gIdx + 1}: ${shot.caption}`}
+                  >
+                    <img src={shot.src} alt={shot.caption} loading="lazy" />
+                  </button>
+                ))}
+              </div>
+            )}
 
             <div class="pipeline-diagram-box">
               <div class="diagram-label">
@@ -636,6 +657,46 @@ const quickTags = [
     line-height: 1.65;
   }
 
+  /* Project Screenshot Gallery */
+  .project-gallery {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .gallery-shot {
+    padding: 0;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--border-default);
+    background-color: var(--bg-base);
+    aspect-ratio: 9 / 16;
+    cursor: zoom-in;
+  }
+
+  .gallery-shot-wide {
+    aspect-ratio: 9 / 16;
+  }
+
+  .gallery-shot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .gallery-shot-wide img {
+    object-fit: contain;
+    object-position: center;
+    background-color: #120d0a;
+  }
+
+  .gallery-shot:hover img {
+    transform: scale(1.04);
+  }
+
   /* Architecture Pipeline Flow */
   .pipeline-diagram-box {
     padding: 1.15rem;
@@ -828,6 +889,9 @@ const quickTags = [
   }
 
   @media (max-width: 960px) {
+    .project-gallery {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
     .diagram-nodes {
       grid-template-columns: 1fr;
     }

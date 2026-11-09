@@ -3,10 +3,11 @@ export interface ProjectItem {
   title: string;
   period: string;
   role: string;
-  category: 'data' | 'ai' | 'web';
+  category: 'data' | 'ai' | 'web' | 'game';
   categoryLabel: string;
   githubUrl: string;
   articleUrl?: string;
+  gallery?: { src: string; caption: string }[];
   summary: string;
   highlights: string[];
   architectureFlow: string[];
@@ -17,7 +18,7 @@ export interface ProjectItem {
 export interface TechToolItem {
   id: string;
   name: string;
-  category: 'data' | 'ai' | 'db' | 'infra';
+  category: 'data' | 'ai' | 'db' | 'infra' | 'game';
   categoryLabel: string;
   purpose: string;
   usedIn: string;
@@ -255,6 +256,38 @@ export const PROJECTS: ProjectItem[] = [
     techStack: ['Python', 'CLIP', 'FAISS', 'React', 'Vite', 'JavaScript'],
     status: 'Hoàn thành (04/2026)',
   },
+  {
+    id: '123-do-tiktok-live-game',
+    title: '1, 2, 3 DÔ! — Quán nhậu chibi tương tác TikTok Live',
+    period: '2026',
+    role: 'Dự án cá nhân · Game tương tác thời gian thực',
+    category: 'game',
+    categoryLabel: 'Game & Realtime',
+    githubUrl: 'https://github.com/DinhVen/123-do-game',
+    gallery: [
+      { src: '/images/projects/123-do/game-full-table.png', caption: '1, 2, 3 DÔ! — Quán nhậu 7 bàn, 28 ghế (bản chạy thử với 24 người chơi mô phỏng)' },
+      { src: '/images/projects/123-do/game-cheers.png', caption: 'Khoảnh khắc cả quán nâng ly "1, 2, 3 DÔ!" (+5% độ say) và bảng xếp hạng Thần Cồn' },
+      { src: '/images/projects/123-do/game-empty.png', caption: 'Quán trống: thực đơn 7 món theo xu, quầy chủ quán, 2 bảng xếp hạng' },
+      { src: '/images/projects/123-do/mock-dashboard-live.png', caption: 'Bảng điều khiển giả lập (MOCK) để thử bình luận, quà tặng, tim và bot trước khi lên sóng' },
+    ],
+    summary:
+      'Game pixel/chibi tương tác trực tiếp qua livestream TikTok theo khung dọc 9:16: khán giả bình luận, thả tim và tặng quà để vào bàn, nâng ly, đổi bàn hay gọi "vợ bắt về". Backend là nguồn trạng thái duy nhất, giao diện Phaser 3 chỉ hiển thị và chạy qua OBS Browser Source.',
+    highlights: [
+      'Bản v2.0: 7 bàn tròn (6 thường + 1 VIP), 28 ghế; nhân vật chibi đi bộ, đổi bàn, cụng ly, say và rời quán; chủ quán, thực đơn 7 món theo xu và 2 bảng xếp hạng.',
+      'Backend Node.js + Socket.io kết nối phòng TikTok qua tiktok-live-connector: hàng đợi sự kiện tuần tự, chống trùng, giới hạn tần suất; hàng chờ tối đa 30 người (VIP ưu tiên, FIFO).',
+      'Độ bền khi livestream: lưu snapshot trạng thái mỗi 3 giây (ghi nguyên tử), tự khôi phục trong 15 phút, tự kết nối lại (exponential backoff + jitter) và che dữ liệu nhạy cảm trong log.',
+      'Chế độ MOCK với bảng điều khiển để thử nghiệm và chế độ LIVE khi lên sóng; kèm 24 file kiểm thử tự động.',
+    ],
+    architectureFlow: [
+      'TikTok Live (chat, tim, quà)',
+      'tiktok-live-connector',
+      'Node.js + Socket.io (Game State)',
+      'Phaser 3 + Vite (360x640)',
+      'OBS Browser Source (1080x1920)',
+    ],
+    techStack: ['Node.js', 'Express', 'Socket.io', 'tiktok-live-connector', 'Phaser 3', 'Vite', 'Web Audio API', 'OBS', 'JavaScript'],
+    status: 'Đã triển khai trên GitHub',
+  },
 ];
 
 export const TECH_TOOLS: TechToolItem[] = [
@@ -317,6 +350,26 @@ export const TECH_TOOLS: TechToolItem[] = [
     usedIn: 'Dự án E-commerce User Behavior Analytics',
     relatedUrl: 'https://github.com/DinhVen/E-commerce-User-Behavior-Analytics',
     tags: ['Amazon S3', 'AWS EC2', 'AWS RDS', 'Parquet'],
+  },
+  {
+    id: 'phaser-vite-frontend',
+    name: 'Phaser 3, Vite & Web Audio API',
+    category: 'game',
+    categoryLabel: 'Game Frontend',
+    purpose: 'Dựng giao diện game 2D pixel/chibi khung dọc 9:16 (360x640 scale 3x), hoạt ảnh nhân vật đi bộ/cụng ly và âm thanh 8-bit tổng hợp bằng Web Audio.',
+    usedIn: 'Dự án 1, 2, 3 DÔ! (TikTok Live Game)',
+    relatedUrl: 'https://github.com/DinhVen/123-do-game',
+    tags: ['Phaser 3', 'Vite', 'Web Audio API', 'Pixel Art'],
+  },
+  {
+    id: 'socketio-tiktok-live',
+    name: 'Node.js, Socket.io & TikTok Live Connector',
+    category: 'game',
+    categoryLabel: 'Realtime Backend',
+    purpose: 'Nhận sự kiện bình luận, tim, quà từ phòng TikTok Live, chuẩn hóa và đẩy trạng thái game theo thời gian thực tới giao diện; có lưu snapshot và tự khôi phục.',
+    usedIn: 'Dự án 1, 2, 3 DÔ! (TikTok Live Game)',
+    relatedUrl: 'https://github.com/DinhVen/123-do-game',
+    tags: ['Node.js', 'Express', 'Socket.io', 'tiktok-live-connector', 'OBS'],
   },
 ];
 
