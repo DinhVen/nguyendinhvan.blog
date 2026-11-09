@@ -1,0 +1,752 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { SITE_PROFILE, PROJECTS, STUDENT_MILESTONES, ROADMAP_ITEMS } from '../data/profile';
+import { getEventImages } from '../utils/event-images';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort(
+  (a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
+);
+const featuredPosts = sortedPosts.slice(0, 4);
+
+const postThumbMap: Record<string, string> = {
+  'le-tot-nghiep-cu-nhan-cntt-2026-va-cong-viec-dau-tien':
+    getEventImages('tot-nghiep-cu-nhan')[0] || '/avatar.jpg',
+  'nhin-lai-4-nam-sinh-vien-cntt-dai-hoc-quy-nhon':
+    '/images/events/4-nam-sinh-vien/duoc-bau-lam-bi-thu-chi-doan-cntt45b.jpg',
+  'ky-thuc-tap-tai-tma-solutions-va-nhung-du-an-thoi-sinh-vien':
+    '/images/events/tma-internship/mentor-va-cac-intern.jpg',
+  'tuoi-tre-nhiet-huyet-cung-hoi-sinh-vien-va-doi-tnxk-kcntt':
+    getEventImages('hoi-sinh-vien')[0] || '/avatar.jpg',
+  'dau-an-itqc-san-choi-lap-trinh-khoa-cntt-dai-hoc-quy-nhon':
+    getEventImages('itqc-2023')[0] || '/avatar.jpg',
+  'hanh-trinh-chung-ket-da-nang-code-league-2023':
+    getEventImages('da-nang-code')[0] || '/avatar.jpg',
+  'tam-biet-mai-truong-thpt-ngo-may-phu-cat-khep-lai-tuoi-18':
+    getEventImages('tot-nghiep-lop-12')[0] || '/avatar.jpg',
+  'uoc-mo-mau-xanh-ao-linh-2027': '/avatar.jpg',
+};
+
+const postHeadlineMap: Record<string, string> = {
+  'le-tot-nghiep-cu-nhan-cntt-2026-va-cong-viec-dau-tien': 'Lễ Tốt nghiệp Cử nhân CNTT 30/07/2026',
+  'nhin-lai-4-nam-sinh-vien-cntt-dai-hoc-quy-nhon': 'Nhìn lại 4 năm Sinh viên CNTT — QNU',
+  'ky-thuc-tap-tai-tma-solutions-va-nhung-du-an-thoi-sinh-vien': 'Kỳ thực tập Data Engineering tại TMA',
+  'tuoi-tre-nhiet-huyet-cung-hoi-sinh-vien-va-doi-tnxk-kcntt': 'Tuổi trẻ Hội Sinh viên & Đội TNXK',
+  'dau-an-itqc-san-choi-lap-trinh-khoa-cntt-dai-hoc-quy-nhon': 'Dấu ấn IT QNU Challenge 2023 (ITQC)',
+  'hanh-trinh-chung-ket-da-nang-code-league-2023': 'Ký sự Chung kết Da Nang Code League',
+  'tam-biet-mai-truong-thpt-ngo-may-phu-cat-khep-lai-tuoi-18': 'Tạm biệt mái trường THPT Ngô Mây',
+  'uoc-mo-mau-xanh-ao-linh-2027': 'Ước mơ Màu Xanh Áo Lính năm 2027',
+};
+
+const milestonesWithPhotos = STUDENT_MILESTONES.map((item) => {
+  const photos = getEventImages(item.imageFolder);
+  return {
+    ...item,
+    photoCount: photos.length,
+    coverPhoto: photos[0] || '/avatar.jpg',
+  };
+});
+---
+
+<BaseLayout activeNav="home">
+  <div class="container home-layout">
+    <!-- Block 2: Hero Identity Card (Option A Editorial Top Profile) -->
+    <section class="hero-section bento-card reveal-item" aria-label="Hồ sơ cá nhân Nguyễn Đình Văn">
+      <div class="hero-main-row">
+        <div class="hero-identity">
+          <div class="hero-avatar-box">
+            <img src={SITE_PROFILE.avatar} alt={`Ảnh chân dung ${SITE_PROFILE.name}`} class="hero-avatar-img" />
+          </div>
+          <div class="hero-text-col">
+            <h1 class="hero-name">{SITE_PROFILE.name}</h1>
+            <p class="hero-role">
+              Cử nhân CNTT (ĐH Quy Nhơn) · Nhân viên Số hóa (Trung tâm Lưu trữ lịch sử tỉnh Gia Lai)
+            </p>
+            <p class="hero-bio">
+              Tốt nghiệp Cử nhân Công nghệ Thông tin (Hệ thống Thông tin) tại Trường Đại học Quy Nhơn, từng thực tập Data Engineering tại TMA Solutions Bình Định. Nơi lưu giữ kỷ niệm thời sinh viên, các dự án đã làm và ước mơ trở thành Sĩ quan / Quân nhân chuyên nghiệp trong Quân đội Nhân dân Việt Nam.
+            </p>
+          </div>
+        </div>
+
+        <div class="hero-cta-col">
+          <a href="/projects" class="btn-primary">
+            <span>Xem Dự án & Kỷ niệm</span>
+            <Icon name="arrow-right" size={16} />
+          </a>
+          <a href="/blog" class="btn-secondary">
+            <span>Đọc {sortedPosts.length} Bài báo</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 3 Key Pillars Strip -->
+      <div class="hero-pillars-grid">
+        <div class="pillar-item">
+          <div class="pillar-icon">
+            <Icon name="graduation" size={18} />
+          </div>
+          <div class="pillar-info">
+            <span class="pillar-label">Đại học Quy Nhơn (2022–2026)</span>
+            <strong class="pillar-value">Cử nhân CNTT (GPA 2.80/4)</strong>
+          </div>
+        </div>
+
+        <div class="pillar-item">
+          <div class="pillar-icon">
+            <Icon name="briefcase" size={18} />
+          </div>
+          <div class="pillar-info">
+            <span class="pillar-label">Thực tập & Công tác</span>
+            <strong class="pillar-value">TMA Bình Định & Sở Nội vụ Gia Lai</strong>
+          </div>
+        </div>
+
+        <div class="pillar-item">
+          <div class="pillar-icon">
+            <Icon name="shield" size={18} />
+          </div>
+          <div class="pillar-info">
+            <span class="pillar-label">Mục tiêu lớn năm 2027</span>
+            <strong class="pillar-value">Quân đội Nhân dân Việt Nam</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Middle 2-Column Editorial Split: Block 3 (Projects 5/12) + Block 4 (Photo-Journalism Articles 7/12) -->
+    <div class="editorial-split-grid">
+      <!-- Block 3: Technical Projects -->
+      <section class="bento-card projects-col reveal-item" style="--reveal-delay: 60ms" aria-label="Dự án kỹ thuật">
+        <div class="section-head">
+          <div class="section-head-text">
+            <h2 class="section-heading">Dự án Kỹ thuật đã thực hiện</h2>
+            <p class="section-sub">2 đồ án chuyên ngành Hệ thống Thông tin & Kỹ thuật Dữ liệu</p>
+          </div>
+          <a href="/projects" class="section-action-link">Xem chi tiết</a>
+        </div>
+
+        <div class="home-projects-list">
+          {
+            PROJECTS.map((project) => (
+              <article class="home-project-card">
+                <div class="hp-top">
+                  <div class="hp-meta-wrap">
+                    <span class="hp-role">{project.role} · {project.period}</span>
+                    <h3 class="hp-title" title={project.title}>{project.title}</h3>
+                  </div>
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="hp-github-btn"
+                  >
+                    <Icon name="github" size={14} />
+                    <span>Mã nguồn GitHub</span>
+                  </a>
+                </div>
+
+                <p class="hp-summary">{project.summary}</p>
+
+                <div class="hp-tags">
+                  {project.techStack.slice(0, 3).map((tech) => (
+                    <span class="hp-tag">{tech}</span>
+                  ))}
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <!-- Block 4: Photo-Journalism Articles -->
+      <section class="bento-card articles-col reveal-item" style="--reveal-delay: 120ms" aria-label="Phóng sự ảnh và nhật ký">
+        <div class="section-head">
+          <div class="section-head-text">
+            <h2 class="section-heading">Phóng sự ảnh & Nhật ký</h2>
+            <p class="section-sub">{sortedPosts.length} bài viết dài ghi lại chặng đường từ cấp 3 đến ngày tốt nghiệp Đại học</p>
+          </div>
+          <a href="/blog" class="section-action-link">Tất cả {sortedPosts.length} bài</a>
+        </div>
+
+        <div class="home-articles-grid">
+          {
+            featuredPosts.map((post) => {
+              const cover = postThumbMap[post.id] || '/avatar.jpg';
+              return (
+                <a href={`/blog/${post.id}`} class="home-article-card">
+                  <div class="ha-thumb-wrap">
+                    <img src={cover} alt={post.data.title} class="ha-thumb" />
+                  </div>
+                  <div class="ha-body">
+                    <div class="ha-meta">{post.data.categoryLabel} · {post.data.pubDate}</div>
+                    <h3 class="ha-title" title={post.data.title}>{postHeadlineMap[post.id] || post.data.title}</h3>
+                  </div>
+                </a>
+              );
+            })
+          }
+        </div>
+      </section>
+    </div>
+
+    <!-- Block 5: 9 Real Student & Career Milestones -->
+    <section class="milestones-section bento-card reveal-item" aria-label="9 cột mốc học tập và hoạt động">
+      <div class="section-head">
+        <div class="section-head-text">
+          <h2 class="section-heading">9 Cột mốc Học tập, Thực tập & Hoạt động</h2>
+          <p class="section-sub">Mỗi cột mốc đính kèm album ảnh tư liệu thật và bài báo phóng sự chi tiết</p>
+        </div>
+        <a href="/projects" class="section-action-link">Xem đủ 9 mốc</a>
+      </div>
+
+      <div class="home-milestones-grid">
+        {
+          milestonesWithPhotos.slice(0, 6).map((item, idx) => (
+            <a
+              href={item.blogUrl || '/projects'}
+              class="home-milestone-row reveal-item"
+              style={`--reveal-delay: ${idx * 50}ms`}
+            >
+              <img src={item.coverPhoto} alt={item.title} class="hm-thumb" />
+              <div class="hm-info">
+                <div class="hm-meta">{item.period} · Album {item.photoCount} ảnh</div>
+                <h3 class="hm-title" title={item.title}>{item.title}</h3>
+                <div class="hm-org">{item.organization}</div>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- Block 6: 2027 Vietnam People's Army Goal Highlight -->
+    <section class="roadmap-highlight bento-card reveal-item" aria-label="Định hướng Quân ngũ 2027">
+      <div class="section-head">
+        <div class="section-head-text">
+          <h2 class="section-heading">Định hướng 2027 & Ước mơ Màu Xanh Áo Lính</h2>
+          <p class="section-sub">
+            Từ giảng đường Công nghệ Thông tin đến quyết tâm lên đường thực hiện Nghĩa vụ Quân sự năm 2027
+          </p>
+        </div>
+        <a href="/roadmap" class="section-action-link">Xem lộ trình 2027</a>
+      </div>
+
+      <div class="home-roadmap-grid">
+        {
+          ROADMAP_ITEMS.map((item) => (
+            <div class="hr-card">
+              <div class="hr-top">
+                <span class:list={['badge', item.badgeType === 'de' ? 'badge-de' : item.badgeType === 'life' ? 'badge-life' : 'badge-future']}>
+                  {item.horizon}
+                </span>
+                <span class="hr-cat">{item.category}</span>
+              </div>
+              <h3 class="hr-title">{item.title}</h3>
+              <p class="hr-desc">{item.description}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+  </div>
+
+  <style>
+    .home-layout {
+      padding-top: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .hero-main-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .hero-identity {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.25rem;
+      min-width: 0;
+    }
+
+    .hero-avatar-box {
+      width: 84px;
+      height: 84px;
+      margin-top: 2px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid var(--border-hover);
+      background-color: var(--bg-surface-elevated);
+      flex-shrink: 0;
+    }
+
+    .hero-avatar-img {
+      width: 100%;
+      height: calc(100% + 10px);
+      margin-top: -10px;
+      object-fit: cover;
+      object-position: center top;
+    }
+
+    .hero-text-col {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      min-width: 0;
+    }
+
+    .hero-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .hero-role {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .hero-bio {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      max-width: 68ch;
+      line-height: 1.6;
+      margin-top: 0.15rem;
+    }
+
+    .hero-cta-col {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.65rem;
+      flex-shrink: 0;
+    }
+
+    .hero-pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      padding-top: 1.15rem;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .pillar-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.8rem 0.95rem;
+      border-radius: var(--radius-md);
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      min-width: 0;
+    }
+
+    .pillar-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-de);
+      flex-shrink: 0;
+    }
+
+    .pillar-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .pillar-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pillar-value {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Section Header Pattern */
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .section-head-text {
+      min-width: 0;
+    }
+
+    .section-heading {
+      font-size: 1.125rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--text-primary);
+    }
+
+    .section-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    .section-action-link {
+      display: inline-flex;
+      align-items: center;
+      height: 36px;
+      padding: 0 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .section-action-link:hover {
+      background-color: var(--bg-surface-hover);
+      color: var(--text-primary);
+    }
+
+    /* Middle 2-Column Split */
+    .editorial-split-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    .projects-col {
+      grid-column: span 5;
+    }
+
+    .articles-col {
+      grid-column: span 7;
+    }
+
+    .home-projects-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .home-project-card {
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .hp-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+    }
+
+    .hp-meta-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      min-width: 0;
+    }
+
+    .hp-role {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .hp-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .hp-github-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      height: 36px;
+      padding: 0 0.75rem;
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-surface);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .hp-github-btn:hover {
+      background-color: var(--accent-de);
+      color: var(--accent-de-fg);
+    }
+
+    .hp-summary {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .hp-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      padding-top: 0.15rem;
+    }
+
+    .hp-tag {
+      padding: 0.15rem 0.55rem;
+      border-radius: 6px;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    /* Articles 2x2 Grid */
+    .home-articles-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.85rem;
+    }
+
+    .home-article-card {
+      border-radius: var(--radius-md);
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.18s ease, background-color 0.18s ease;
+    }
+
+    .home-article-card:hover {
+      background-color: var(--bg-surface-hover);
+    }
+
+    .ha-thumb-wrap {
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      background-color: var(--bg-surface);
+      overflow: hidden;
+    }
+
+    .ha-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .ha-body {
+      padding: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .ha-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ha-title {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Milestones 2-Column Compact Rows (<= 3 lines per row) */
+    .home-milestones-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+
+    .home-milestone-row {
+      padding: 0.85rem;
+      border-radius: var(--radius-md);
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      min-width: 0;
+      transition: border-color 0.18s ease, background-color 0.18s ease;
+    }
+
+    .home-milestone-row:hover {
+      background-color: var(--bg-surface-hover);
+    }
+
+    .hm-thumb {
+      width: 64px;
+      height: 64px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      border: 1px solid var(--border-default);
+      flex-shrink: 0;
+    }
+
+    .hm-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .hm-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .hm-title {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .hm-org {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Roadmap 3-Column Strip */
+    .home-roadmap-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.85rem;
+    }
+
+    .hr-card {
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      min-width: 0;
+    }
+
+    .hr-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      min-width: 0;
+    }
+
+    .hr-cat {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .hr-title {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.4;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .hr-desc {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 1023px) {
+      .hero-main-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .projects-col,
+      .articles-col {
+        grid-column: span 12;
+      }
+      .home-roadmap-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .hero-identity {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .hero-pillars-grid,
+      .home-articles-grid,
+      .home-milestones-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</BaseLayout>

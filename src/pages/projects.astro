@@ -1,0 +1,607 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { SITE_PROFILE, PROJECTS, STUDENT_MILESTONES } from '../data/profile';
+import { getEventImages } from '../utils/event-images';
+
+function getMilestoneIcon(type: string) {
+  if (type === 'education') return 'graduation';
+  if (type === 'internship') return 'briefcase';
+  if (type === 'achievement') return 'award';
+  return 'user';
+}
+
+const milestonesWithPhotos = STUDENT_MILESTONES.map((item) => ({
+  ...item,
+  photos: getEventImages(item.imageFolder),
+}));
+---
+
+<BaseLayout
+  title={`Đời sinh viên, Thực tập & Dự án — ${SITE_PROFILE.name}`}
+  description="Quãng đời sinh viên tại Trường Đại học Quy Nhơn, kỳ thực tập tại TMA Solutions Bình Định và các dự án đã hoàn thành của Nguyễn Đình Văn."
+  activeNav="projects"
+>
+  <div class="container page-wrap">
+    <!-- Page Header -->
+    <header class="page-header bento-card reveal-item">
+      <div class="section-eyebrow">
+        <Icon name="graduation" size={15} />
+        <span>HỌC VẤN • THỰC TẬP • THÀNH TÍCH • DỰ ÁN</span>
+      </div>
+      <h1 class="page-title">Chặng đường Sinh viên CNTT & Các dự án đã làm</h1>
+      <p class="page-desc">
+        Tổng hợp chân thực quãng đời sinh viên tại <strong>Trường Đại học Quy Nhơn (09/2022 – 30/07/2026)</strong>, trải nghiệm thực tập tại <strong>TMA Solutions Bình Định</strong>, công việc tại <strong>Trung tâm Lưu trữ lịch sử tỉnh Gia Lai</strong> và 2 đồ án chuyên ngành.
+      </p>
+    </header>
+
+    <!-- Section 1: 2 Real Projects from CV -->
+    <section class="projects-stack" aria-label="2 Dự án kỹ thuật">
+      {
+        PROJECTS.map((project, index) => (
+          <article class="bento-card project-detail-card reveal-item" style={`--reveal-delay: ${index * 80}ms`}>
+            <div class="project-header">
+              <div class="project-title-block">
+                <div class="project-meta-line">
+                  <span class="project-index">DỰ ÁN 0{index + 1}</span>
+                  <span class="project-sep">·</span>
+                  <span class="project-role">{project.role}</span>
+                  <span class="project-sep">·</span>
+                  <span class="project-period">{project.period}</span>
+                </div>
+                <h2 class="project-name">
+                  <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" class="project-name-link">
+                    <span>{project.title}</span>
+                  </a>
+                </h2>
+              </div>
+              <div class="project-header-right">
+                <span class="badge badge-de">{project.status}</span>
+                <a
+                  href={project.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="github-btn"
+                  title={`Mở repo GitHub: ${project.title}`}
+                >
+                  <Icon name="github" size={15} />
+                  <span>Mã nguồn GitHub</span>
+                </a>
+              </div>
+            </div>
+
+            <p class="project-desc">{project.summary}</p>
+
+            <div class="pipeline-diagram-box">
+              <div class="diagram-label">
+                <Icon name="pipeline" size={14} />
+                <span>LUỒNG XỬ LÝ CỦA HỆ THỐNG</span>
+              </div>
+              <div class="diagram-nodes">
+                {project.architectureFlow.map((node, i) => (
+                  <div class="diagram-node">
+                    <span class="node-step">0{i + 1}</span>
+                    <span class="node-title">{node}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div class="project-bottom-grid">
+              <div class="impact-block">
+                <h3 class="sub-label">Những công việc đã thực hiện</h3>
+                <ul class="impact-list">
+                  {project.highlights.map((item) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div class="stack-block">
+                <h3 class="sub-label">Công nghệ chính</h3>
+                <div class="stack-tags">
+                  {project.techStack.slice(0, 6).map((tech) => (
+                    <span class="badge badge-neutral">{tech}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </section>
+
+    <!-- Section 2: 9 Student Life, Internship & Achievements Milestones -->
+    <section class="timeline-section bento-card reveal-item" aria-label="9 Cột mốc quãng đời sinh viên và thực tập">
+      <div class="section-eyebrow">
+        <Icon name="award" size={15} />
+        <span>DẤU ẤN GIẢNG ĐƯỜNG & DOANH NGHIỆP (9 CỘT MỐC)</span>
+      </div>
+      <h2 class="section-title">Học tập, Thực tập & Hoạt động Sinh viên</h2>
+
+      <div class="milestone-grid">
+        {
+          milestonesWithPhotos.map((item, idx) => (
+            <div class="milestone-card reveal-item" style={`--reveal-delay: ${(idx % 2) * 60}ms`}>
+              <div class="ms-header">
+                <div class="ms-header-left">
+                  <span class="ms-icon">
+                    <Icon name={getMilestoneIcon(item.type)} size={16} />
+                  </span>
+                  <span class="ms-period">{item.period}</span>
+                </div>
+                {item.blogUrl && (
+                  <a href={item.blogUrl} class="ms-article-link">
+                    <span>Đọc bài báo</span>
+                    <Icon name="arrow-right" size={13} />
+                  </a>
+                )}
+              </div>
+
+              <h3 class="ms-title" title={item.title}>{item.title}</h3>
+              <div class="ms-org" title={item.organization}>{item.organization}</div>
+              <p class="ms-desc">{item.description}</p>
+
+              {item.photos.length > 0 && (
+                <div class="ms-gallery">
+                  <div class="ms-gallery-label">
+                    <Icon name="folder" size={13} />
+                    <span>Album tư liệu ({item.photos.length} ảnh)</span>
+                  </div>
+                  <div class="ms-photo-grid">
+                    {item.photos.slice(0, 4).map((photoUrl, pIdx) => (
+                      <button
+                        type="button"
+                        class="ms-photo-btn"
+                        data-lightbox-src={photoUrl}
+                        data-lightbox-caption={`${item.title} — Ảnh ${pIdx + 1}/${item.photos.length}`}
+                        aria-label={`Xem ảnh ${pIdx + 1} của ${item.title}`}
+                      >
+                        <img src={photoUrl} alt={`${item.title} - ảnh ${pIdx + 1}`} />
+                        {pIdx === 3 && item.photos.length > 4 && (
+                          <span class="ms-photo-more">+{item.photos.length - 4}</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- Section 3: Skills Matrix from CV -->
+    <section class="stack-matrix-card bento-card reveal-item" aria-label="Kỹ năng từ CV">
+      <div class="section-eyebrow">
+        <Icon name="terminal" size={15} />
+        <span>KỸ NĂNG TÍCH LŨY (SKILLS)</span>
+      </div>
+      <h2 class="matrix-title">Nền tảng kỹ thuật & kỹ năng làm việc</h2>
+      <div class="matrix-grid">
+        {
+          SITE_PROFILE.coreStack.map((group) => (
+            <div class="matrix-col">
+              <h3 class="matrix-group-name">{group.group}</h3>
+              <div class="matrix-items">
+                {group.items.map((item) => (
+                  <span class="matrix-item">{item}</span>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+  </div>
+
+  <style>
+    .page-wrap {
+      padding-top: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .page-title {
+      font-size: clamp(1.5rem, 2.6vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.45rem;
+    }
+
+    .page-desc {
+      font-size: 0.9375rem;
+      color: var(--text-secondary);
+      max-width: 72ch;
+    }
+
+    .projects-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .project-detail-card {
+      display: flex;
+      flex-direction: column;
+      gap: 1.15rem;
+    }
+
+    .project-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .project-title-block {
+      min-width: 0;
+    }
+
+    .project-meta-line {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .project-index {
+      color: var(--accent-de);
+      font-weight: 600;
+    }
+
+    .project-role {
+      color: var(--text-secondary);
+    }
+
+    .project-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .project-name-link:hover {
+      color: var(--accent-de);
+    }
+
+    .project-header-right {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      min-width: 0;
+    }
+
+    .github-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      height: 36px;
+      padding: 0 0.85rem;
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-default);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      white-space: nowrap;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .github-btn:hover {
+      background-color: var(--bg-surface-hover);
+      color: var(--accent-de);
+    }
+
+    .project-desc {
+      font-size: 0.9375rem;
+      color: var(--text-secondary);
+      max-width: 76ch;
+    }
+
+    .pipeline-diagram-box {
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .diagram-label {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .diagram-nodes {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.5rem;
+    }
+
+    .diagram-node {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.55rem 0.65rem;
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.75rem;
+      min-width: 0;
+    }
+
+    .node-step {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent-de);
+      flex-shrink: 0;
+    }
+
+    .node-title {
+      font-weight: 500;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .project-bottom-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 1.25rem;
+    }
+
+    .sub-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .impact-list {
+      padding-left: 1.15rem;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .stack-tags {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.45rem;
+    }
+
+    .stack-tags .badge {
+      justify-content: center;
+    }
+
+    /* Milestones Grid */
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .milestone-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .milestone-card {
+      padding: 1.15rem;
+      border-radius: var(--radius-md);
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      min-width: 0;
+    }
+
+    .ms-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .ms-header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-width: 0;
+    }
+
+    .ms-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      color: var(--accent-de);
+      flex-shrink: 0;
+    }
+
+    .ms-period {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .ms-article-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      height: 32px;
+      padding: 0 0.65rem;
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--accent-de);
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .ms-article-link:hover {
+      background-color: var(--bg-surface-hover);
+    }
+
+    .ms-title {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ms-org {
+      font-size: 0.75rem;
+      color: var(--accent-de);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ms-desc {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ms-gallery {
+      margin-top: auto;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .ms-gallery-label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .ms-photo-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.45rem;
+    }
+
+    .ms-photo-btn {
+      position: relative;
+      aspect-ratio: 4 / 3;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 1px solid var(--border-default);
+      background-color: var(--bg-surface);
+    }
+
+    .ms-photo-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .ms-photo-more {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(9, 11, 16, 0.72);
+      color: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Skills Matrix */
+    .matrix-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.85rem;
+    }
+
+    .matrix-col {
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .matrix-group-name {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--accent-de);
+      margin-bottom: 0.65rem;
+    }
+
+    .matrix-items {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+    }
+
+    @media (max-width: 1023px) {
+      .diagram-nodes {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .milestone-grid,
+      .project-bottom-grid {
+        grid-template-columns: 1fr;
+      }
+      .matrix-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 639px) {
+      .diagram-nodes,
+      .matrix-grid {
+        grid-template-columns: 1fr;
+      }
+      .ms-photo-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</BaseLayout>

@@ -1,0 +1,268 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { SITE_PROFILE, ROADMAP_ITEMS } from '../data/profile';
+---
+
+<BaseLayout
+  title={`Định hướng 2027 & Ước mơ Quân ngũ — ${SITE_PROFILE.name}`}
+  description="Câu chuyện cuộc sống, quê hương Quy Nhơn và ước mơ lên đường nhập ngũ năm 2027, trở thành Sĩ quan / Quân nhân chuyên nghiệp phục vụ Quân đội Nhân dân Việt Nam."
+  activeNav="roadmap"
+>
+  <div class="container page-wrap">
+    <div class="top-bento-row">
+      <article class="bento-card life-intro-card reveal-item">
+        <div class="section-eyebrow">
+          <Icon name="shield" size={15} />
+          <span>ƯỚC MƠ & LÝ TƯỞNG TUỔI TRẺ (2027)</span>
+        </div>
+        <h1 class="page-title">Khoác lên mình màu áo xanh Quân đội Nhân dân Việt Nam</h1>
+        <p class="life-p">
+          Mình tốt nghiệp Cử nhân Công nghệ Thông tin (Hệ thống Thông tin) tại <strong>Trường Đại học Quy Nhơn</strong>, từng thực tập Data Engineering tại <strong>TMA Solutions Bình Định</strong> và hiện làm Nhân viên Số hóa tại <strong>Trung tâm Lưu trữ lịch sử — Sở Nội vụ tỉnh Gia Lai</strong>. Công nghệ cho mình tư duy logic và sự tỉ mỉ, nhưng ước mơ lớn nhất mà mình luôn ấp ủ là được đứng trong hàng ngũ của <strong>Quân đội Nhân dân Việt Nam</strong>.
+        </p>
+        <p class="life-p">
+          Sang năm <strong>2027</strong>, mình sẽ lên đường thực hiện <strong>Nghĩa vụ Quân sự</strong> — bước khởi đầu để rèn luyện bản lĩnh và theo đuổi ước mơ trở thành một <strong>người Sĩ quan hoặc Quân nhân chuyên nghiệp</strong> phục vụ lâu dài cho Quân đội và Tổ quốc.
+        </p>
+        <blockquote class="motto-box">
+          “{SITE_PROFILE.lifeSnapshot.lifeMotto}”
+        </blockquote>
+      </article>
+
+      <article class="bento-card snapshot-card reveal-item" style="--reveal-delay: 80ms">
+        <div class="section-eyebrow">
+          <Icon name="user" size={15} />
+          <span>THÔNG TIN & NHỊP SỐNG HIỆN TẠI</span>
+        </div>
+        <h2 class="sub-heading">Hành trang chuẩn bị cho năm 2027</h2>
+
+        <div class="now-items">
+          <div class="now-item">
+            <div class="now-icon-box">
+              <Icon name="graduation" size={18} />
+            </div>
+            <div class="now-content">
+              <span class="now-label">Nền tảng đã hoàn thành</span>
+              <p class="now-val">{SITE_PROFILE.lifeSnapshot.studentLife}</p>
+            </div>
+          </div>
+
+          <div class="now-item">
+            <div class="now-icon-box">
+              <Icon name="sparkles" size={18} />
+            </div>
+            <div class="now-content">
+              <span class="now-label">Rèn luyện hàng ngày</span>
+              <p class="now-val">{SITE_PROFILE.lifeSnapshot.dailyHabit}</p>
+            </div>
+          </div>
+
+          <div class="now-item">
+            <div class="now-icon-box">
+              <Icon name="target" size={18} />
+            </div>
+            <div class="now-content">
+              <span class="now-label">Mục tiêu & Ước mơ 2027</span>
+              <p class="now-val">{SITE_PROFILE.lifeSnapshot.militaryDream}</p>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Future Roadmap Board -->
+    <section class="bento-card roadmap-board reveal-item" aria-label="Bản đồ hành trình">
+      <div class="section-eyebrow">
+        <Icon name="compass" size={15} />
+        <span>CHẶNG ĐƯỜNG ĐÃ QUA & ĐỊNH HƯỚNG PHÍA TRƯỚC</span>
+      </div>
+      <h2 class="board-title">Từ giảng đường Đại học Quy Nhơn đến môi trường Quân ngũ</h2>
+      <p class="board-sub">
+        Ba cột mốc quan trọng định hình con người và con đường mình đã lựa chọn:
+      </p>
+
+      <div class="roadmap-list">
+        {
+          ROADMAP_ITEMS.map((item, idx) => (
+            <div class="roadmap-card-item reveal-item" style={`--reveal-delay: ${idx * 70}ms`}>
+              <div class="rm-top">
+                <span class:list={['badge', item.badgeType === 'de' ? 'badge-de' : item.badgeType === 'life' ? 'badge-life' : 'badge-future']}>
+                  {item.horizon}
+                </span>
+                <span class="rm-cat">{item.category}</span>
+              </div>
+
+              <h3 class="rm-title">{item.title}</h3>
+              <p class="rm-desc">{item.description}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+  </div>
+
+  <style>
+    .page-wrap {
+      padding-top: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .top-bento-row {
+      display: grid;
+      grid-template-columns: 7fr 5fr;
+      gap: 1.25rem;
+    }
+
+    .page-title {
+      font-size: clamp(1.5rem, 2.6vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.75rem;
+    }
+
+    .life-p {
+      font-size: 0.9375rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 0.9rem;
+    }
+
+    .life-p strong {
+      color: var(--text-primary);
+    }
+
+    .motto-box {
+      padding: 0.95rem 1.15rem;
+      border-left: 3px solid var(--accent-de);
+      background-color: var(--bg-surface-elevated);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--text-primary);
+      margin-top: 0.35rem;
+    }
+
+    .sub-heading {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 0.9rem;
+    }
+
+    .now-items {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .now-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+      padding: 0.85rem;
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .now-icon-box {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      color: var(--accent-de);
+      flex-shrink: 0;
+    }
+
+    .now-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .now-label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.2rem;
+    }
+
+    .now-val {
+      font-size: 0.875rem;
+      color: var(--text-primary);
+      line-height: 1.55;
+    }
+
+    .board-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+
+    .board-sub {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .roadmap-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .roadmap-card-item {
+      padding: 1.25rem;
+      border-radius: var(--radius-md);
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .rm-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      min-width: 0;
+    }
+
+    .rm-cat {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .rm-title {
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--text-primary);
+    }
+
+    .rm-desc {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 1023px) {
+      .top-bento-row,
+      .roadmap-list {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</BaseLayout>

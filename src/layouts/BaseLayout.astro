@@ -1,0 +1,1114 @@
+---
+import '../styles/global.css';
+import Icon from '../components/Icon.astro';
+import { SITE_PROFILE } from '../data/profile';
+import { getCollection } from 'astro:content';
+
+interface Props {
+  title?: string;
+  description?: string;
+  activeNav?: 'home' | 'blog' | 'projects' | 'roadmap';
+}
+
+const {
+  title = `${SITE_PROFILE.name} — Trang cá nhân & Nhật ký hành trình`,
+  description = SITE_PROFILE.bio,
+  activeNav = 'home',
+} = Astro.props;
+
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort(
+  (a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
+);
+---
+
+<!doctype html>
+<html lang="vi" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline>
+      (function () {
+        const saved = localStorage.getItem('ndv-theme');
+        if (saved === 'light' || saved === 'dark') {
+          document.documentElement.setAttribute('data-theme', saved);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <!-- Ambient Moving Background (Aurora + Subtle Data Grid + Interactive Nodes Canvas) -->
+    <div class="ambient-bg" aria-hidden="true">
+      <div class="aurora-blob aurora-blob-1"></div>
+      <div class="aurora-blob aurora-blob-2"></div>
+      <div class="aurora-blob aurora-blob-3"></div>
+      <div class="ambient-grid-overlay"></div>
+      <canvas id="ambient-canvas"></canvas>
+    </div>
+
+    <!-- Top Glass Navigation -->
+    <header class="site-header">
+      <div class="container header-inner">
+        <div class="header-left">
+          <button
+            type="button"
+            id="mobile-menu-btn"
+            class="mobile-menu-trigger"
+            aria-label="Mở menu điều hướng"
+          >
+            <Icon name="menu" size={18} />
+          </button>
+
+          <a href="/" class="brand" aria-label="Trang chủ nguyendinhvan.blog">
+            <img src={SITE_PROFILE.avatar} alt={SITE_PROFILE.name} class="brand-avatar" />
+            <div class="brand-text-wrap">
+              <span class="brand-name">{SITE_PROFILE.name}</span>
+              <span class="brand-sub">CNTT • ĐH Quy Nhơn</span>
+            </div>
+          </a>
+        </div>
+
+        <nav class="main-nav" aria-label="Điều hướng chính">
+          <a href="/" class:list={['nav-link', { active: activeNav === 'home' }]} aria-current={activeNav === 'home' ? 'page' : undefined}>
+            <Icon name="home" size={15} />
+            <span>Trang chủ</span>
+          </a>
+          <a href="/projects" class:list={['nav-link', { active: activeNav === 'projects' }]} aria-current={activeNav === 'projects' ? 'page' : undefined}>
+            <Icon name="folder" size={15} />
+            <span>Đời sinh viên & Dự án</span>
+          </a>
+          <a href="/blog" class:list={['nav-link', { active: activeNav === 'blog' }]} aria-current={activeNav === 'blog' ? 'page' : undefined}>
+            <Icon name="book" size={15} />
+            <span>Nhật ký & Bài báo</span>
+          </a>
+          <a href="/roadmap" class:list={['nav-link', { active: activeNav === 'roadmap' }]} aria-current={activeNav === 'roadmap' ? 'page' : undefined}>
+            <Icon name="compass" size={15} />
+            <span>Định hướng 2027</span>
+          </a>
+        </nav>
+
+        <div class="header-actions">
+          <button
+            type="button"
+            id="open-cmd-btn"
+            class="cmd-trigger"
+            aria-label="Mở bảng điều khiển tìm kiếm nhanh (Ctrl + K)"
+          >
+            <Icon name="search" size={15} />
+            <span class="cmd-trigger-text">Tìm nhanh...</span>
+            <kbd>Ctrl K</kbd>
+          </button>
+
+          <button
+            type="button"
+            id="theme-toggle-btn"
+            class="icon-btn"
+            aria-label="Chuyển đổi giao diện Sáng / Tối"
+            title="Đổi giao diện Sáng / Tối"
+          >
+            <span class="icon-sun"><Icon name="sun" size={17} /></span>
+            <span class="icon-moon"><Icon name="moon" size={17} /></span>
+          </button>
+
+          <a
+            href={SITE_PROFILE.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="github-header-btn"
+            aria-label="GitHub Nguyễn Đình Văn"
+          >
+            <Icon name="github" size={16} />
+            <span>GitHub</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-drawer-backdrop" class="mobile-drawer-backdrop" aria-hidden="true"></div>
+    <aside id="mobile-drawer" class="mobile-drawer" aria-label="Menu di động">
+      <div class="drawer-header">
+        <div class="drawer-brand">
+          <img src={SITE_PROFILE.avatar} alt={SITE_PROFILE.name} class="brand-avatar" />
+          <div>
+            <div class="brand-name">{SITE_PROFILE.name}</div>
+            <div class="brand-sub">nguyendinhvan.blog</div>
+          </div>
+        </div>
+        <button type="button" id="mobile-drawer-close" class="drawer-close-btn">Đóng</button>
+      </div>
+      <nav class="drawer-nav" aria-label="Điều hướng di động">
+        <a href="/" class:list={['drawer-link', { active: activeNav === 'home' }]}>
+          <Icon name="home" size={16} />
+          <span>Trang chủ</span>
+        </a>
+        <a href="/projects" class:list={['drawer-link', { active: activeNav === 'projects' }]}>
+          <Icon name="folder" size={16} />
+          <span>Đời sinh viên & Dự án</span>
+        </a>
+        <a href="/blog" class:list={['drawer-link', { active: activeNav === 'blog' }]}>
+          <Icon name="book" size={16} />
+          <span>Nhật ký & Bài báo</span>
+        </a>
+        <a href="/roadmap" class:list={['drawer-link', { active: activeNav === 'roadmap' }]}>
+          <Icon name="compass" size={16} />
+          <span>Định hướng 2027</span>
+        </a>
+      </nav>
+      <div class="drawer-footer">
+        <a href={SITE_PROFILE.github} target="_blank" rel="noopener noreferrer" class="btn-secondary drawer-github">
+          <Icon name="github" size={16} />
+          <span>GitHub (@dinhven)</span>
+        </a>
+      </div>
+    </aside>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="footer-left">
+          <div class="footer-brand">
+            <span class="status-dot"></span>
+            <strong>{SITE_PROFILE.name}</strong>
+            <span class="footer-sep">•</span>
+            <span>{SITE_PROFILE.location}</span>
+          </div>
+          <p class="footer-note">
+            Cử nhân CNTT Đại học Quy Nhơn • Nhân viên Số hóa (Trung tâm Lưu trữ lịch sử tỉnh Gia Lai) • Hướng tới Quân đội Nhân dân Việt Nam (2027).
+          </p>
+        </div>
+        <div class="footer-links">
+          <a href={SITE_PROFILE.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href={`mailto:${SITE_PROFILE.email}`}>{SITE_PROFILE.email}</a>
+          <a href={`tel:${SITE_PROFILE.phone.replace(/\s+/g, '')}`}>{SITE_PROFILE.phone}</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Command Palette Modal -->
+    <div id="cmd-backdrop" class="cmd-backdrop" hidden aria-hidden="true">
+      <div
+        class="cmd-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Tìm kiếm nhanh"
+      >
+        <div class="cmd-header">
+          <Icon name="search" size={18} />
+          <input
+            type="search"
+            id="cmd-input"
+            class="cmd-input"
+            placeholder="Nhập từ khóa bài viết, dự án, ĐH Quy Nhơn, ước mơ 2027..."
+            autocomplete="off"
+          />
+          <button type="button" id="close-cmd-btn" class="cmd-esc">ESC</button>
+        </div>
+
+        <div class="cmd-body" id="cmd-list">
+          <div class="cmd-group-label">Điều hướng nhanh</div>
+          <a href="/" class="cmd-item" data-keywords="trang chu home tong quan">
+            <span class="cmd-item-title">Trang chủ — Hồ sơ & Tổng quan</span>
+            <span class="cmd-item-meta">Trang chủ</span>
+          </a>
+          <a href="/projects" class="cmd-item" data-keywords="sinh vien dai hoc quy nhon tma solutions du an cv">
+            <span class="cmd-item-title">Đời sinh viên, Thực tập TMA & Các dự án đã làm</span>
+            <span class="cmd-item-meta">CV & Portfolio</span>
+          </a>
+          <a href="/blog" class="cmd-item" data-keywords="tat ca bai viet blog phong su anh">
+            <span class="cmd-item-title">Nhật ký & 8 Bài báo Phóng sự ảnh</span>
+            <span class="cmd-item-meta">{sortedPosts.length} bài viết</span>
+          </a>
+          <a href="/roadmap" class="cmd-item" data-keywords="uoc mo 2027 nghia vu quan su si quan quan doi nhan dan viet nam cuoc song">
+            <span class="cmd-item-title">Định hướng 2027 & Ước mơ Quân ngũ</span>
+            <span class="cmd-item-meta">Định hướng tương lai</span>
+          </a>
+
+          <div class="cmd-group-label">Bài báo & Phóng sự ảnh</div>
+          {
+            sortedPosts.map((post) => (
+              <a
+                href={`/blog/${post.id}`}
+                class="cmd-item"
+                data-keywords={`${post.data.title.toLowerCase()} ${post.data.categoryLabel.toLowerCase()} ${post.data.tags.join(' ').toLowerCase()}`}
+              >
+                <span class="cmd-item-title">{post.data.title}</span>
+                <span class="cmd-item-meta">{post.data.categoryLabel}</span>
+              </a>
+            ))
+          }
+
+          <div class="cmd-group-label">Tiện ích</div>
+          <button type="button" id="cmd-theme-switch" class="cmd-item" data-keywords="doi giao dien sang toi dark light theme">
+            <span class="cmd-item-title">Chuyển đổi giao diện Sáng / Tối</span>
+            <span class="cmd-item-meta">Đổi chế độ</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Global Photo Lightbox (Works on any article figure or milestone photo) -->
+    <div id="global-lightbox" class="global-lightbox" hidden aria-hidden="true">
+      <div class="global-lightbox-inner" role="dialog" aria-modal="true" aria-label="Xem ảnh phóng to">
+        <div class="global-lightbox-bar">
+          <span id="global-lightbox-counter" class="global-lightbox-counter">1 / 1</span>
+          <div class="global-lightbox-actions">
+            <button type="button" id="global-lightbox-prev" class="lightbox-nav-btn" aria-label="Ảnh trước">← Trước</button>
+            <button type="button" id="global-lightbox-next" class="lightbox-nav-btn" aria-label="Ảnh tiếp">Tiếp →</button>
+            <button type="button" id="global-lightbox-close" class="lightbox-close-btn">Đóng (ESC)</button>
+          </div>
+        </div>
+        <img id="global-lightbox-img" alt="" class="global-lightbox-img" />
+        <p id="global-lightbox-caption" class="global-lightbox-caption"></p>
+      </div>
+    </div>
+
+    <script is:inline>
+      // 1. Auto-hiding scrollbar indicator
+      let scrollTimer;
+      window.addEventListener('scroll', () => {
+        document.documentElement.classList.add('is-scrolling');
+        clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(() => {
+          document.documentElement.classList.remove('is-scrolling');
+        }, 700);
+      }, { passive: true });
+
+      // 2. Spotlight effect on .bento-card
+      document.addEventListener('mousemove', (e) => {
+        const cards = document.querySelectorAll('.bento-card');
+        cards.forEach((card) => {
+          const rect = card.getBoundingClientRect();
+          card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+          card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+        });
+      }, { passive: true });
+
+      // 3. Apple-style Scroll-Driven Reveal (only animates below-the-fold blocks as user scrolls down)
+      (function initScrollReveal() {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const items = document.querySelectorAll('.reveal-item');
+        if (!items.length) return;
+        const vh = window.innerHeight || 800;
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-revealed');
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.08 }
+        );
+        items.forEach((el) => {
+          const rect = el.getBoundingClientRect();
+          if (rect.top > vh * 0.95) {
+            el.classList.add('reveal-on-scroll');
+            observer.observe(el);
+          }
+        });
+      })();
+
+      // 4. Interactive Ambient Data Nodes Canvas (60fps, pauses when hidden)
+      (function initAmbientCanvas() {
+        const canvas = document.getElementById('ambient-canvas');
+        if (!canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        let width = (canvas.width = window.innerWidth);
+        let height = (canvas.height = window.innerHeight);
+        let mouseX = width / 2;
+        let mouseY = height / 3;
+
+        const count = Math.min(28, Math.max(14, Math.floor(width / 55)));
+        const nodes = Array.from({ length: count }, () => ({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.28,
+          vy: (Math.random() - 0.5) * 0.28,
+          r: Math.random() * 1.6 + 0.9,
+        }));
+
+        window.addEventListener('resize', () => {
+          width = canvas.width = window.innerWidth;
+          height = canvas.height = window.innerHeight;
+        }, { passive: true });
+
+        window.addEventListener('mousemove', (e) => {
+          mouseX = e.clientX;
+          mouseY = e.clientY;
+        }, { passive: true });
+
+        function draw() {
+          ctx.clearRect(0, 0, width, height);
+          const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+          const dotColor = isLight ? 'rgba(15, 118, 110, 0.28)' : 'rgba(45, 212, 191, 0.32)';
+          const lineColor = isLight ? 'rgba(15, 118, 110, 0.07)' : 'rgba(56, 189, 248, 0.08)';
+
+          for (let i = 0; i < nodes.length; i++) {
+            const n = nodes[i];
+            n.x += n.vx;
+            n.y += n.vy;
+            if (n.x < 0 || n.x > width) n.vx *= -1;
+            if (n.y < 0 || n.y > height) n.vy *= -1;
+
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+            ctx.fillStyle = dotColor;
+            ctx.fill();
+
+            for (let j = i + 1; j < nodes.length; j++) {
+              const m = nodes[j];
+              const dx = n.x - m.x;
+              const dy = n.y - m.y;
+              const dist = Math.hypot(dx, dy);
+              if (dist < 150) {
+                ctx.beginPath();
+                ctx.moveTo(n.x, n.y);
+                ctx.lineTo(m.x, m.y);
+                ctx.strokeStyle = lineColor;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+              }
+            }
+
+            const mdx = n.x - mouseX;
+            const mdy = n.y - mouseY;
+            if (Math.hypot(mdx, mdy) < 170) {
+              ctx.beginPath();
+              ctx.moveTo(n.x, n.y);
+              ctx.lineTo(mouseX, mouseY);
+              ctx.strokeStyle = lineColor;
+              ctx.stroke();
+            }
+          }
+          requestAnimationFrame(draw);
+        }
+        requestAnimationFrame(draw);
+      })();
+
+      // 5. Theme Toggle
+      const themeBtn = document.getElementById('theme-toggle-btn');
+      const cmdThemeSwitch = document.getElementById('cmd-theme-switch');
+      function toggleTheme() {
+        const html = document.documentElement;
+        const current = html.getAttribute('data-theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('ndv-theme', next);
+      }
+      themeBtn?.addEventListener('click', toggleTheme);
+      cmdThemeSwitch?.addEventListener('click', () => {
+        toggleTheme();
+        closeCmd();
+      });
+
+      // 6. Mobile Drawer
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const mobileDrawerClose = document.getElementById('mobile-drawer-close');
+      const mobileDrawerBackdrop = document.getElementById('mobile-drawer-backdrop');
+      function openMobileDrawer() {
+        document.body.setAttribute('data-drawer-open', 'true');
+      }
+      function closeMobileDrawer() {
+        document.body.removeAttribute('data-drawer-open');
+      }
+      mobileMenuBtn?.addEventListener('click', openMobileDrawer);
+      mobileDrawerClose?.addEventListener('click', closeMobileDrawer);
+      mobileDrawerBackdrop?.addEventListener('click', closeMobileDrawer);
+
+      // 7. Command Palette
+      const backdrop = document.getElementById('cmd-backdrop');
+      const openBtn = document.getElementById('open-cmd-btn');
+      const closeBtn = document.getElementById('close-cmd-btn');
+      const cmdInput = document.getElementById('cmd-input');
+      const cmdItems = document.querySelectorAll('.cmd-item');
+
+      function openCmd() {
+        if (!backdrop) return;
+        backdrop.hidden = false;
+        backdrop.setAttribute('aria-hidden', 'false');
+        setTimeout(() => cmdInput?.focus(), 20);
+      }
+
+      function closeCmd() {
+        if (!backdrop) return;
+        backdrop.hidden = true;
+        backdrop.setAttribute('aria-hidden', 'true');
+        if (cmdInput) cmdInput.value = '';
+        filterCmd('');
+      }
+
+      function filterCmd(query) {
+        const q = query.trim().toLowerCase();
+        cmdItems.forEach((item) => {
+          const text = (item.textContent || '').toLowerCase();
+          const kw = item.getAttribute('data-keywords') || '';
+          const match = !q || text.includes(q) || kw.includes(q);
+          item.style.display = match ? 'flex' : 'none';
+        });
+      }
+
+      openBtn?.addEventListener('click', openCmd);
+      closeBtn?.addEventListener('click', closeCmd);
+      backdrop?.addEventListener('click', (e) => {
+        if (e.target === backdrop) closeCmd();
+      });
+      cmdInput?.addEventListener('input', (e) => {
+        filterCmd(e.target.value);
+      });
+
+      // 8. Global Photo Lightbox (Article images + Milestone gallery buttons)
+      const lb = document.getElementById('global-lightbox');
+      const lbImg = document.getElementById('global-lightbox-img');
+      const lbCap = document.getElementById('global-lightbox-caption');
+      const lbCounter = document.getElementById('global-lightbox-counter');
+      const lbClose = document.getElementById('global-lightbox-close');
+      const lbPrev = document.getElementById('global-lightbox-prev');
+      const lbNext = document.getElementById('global-lightbox-next');
+
+      let galleryList = [];
+      let currentIdx = 0;
+
+      function collectLightboxItems() {
+        const list = [];
+        document.querySelectorAll('[data-lightbox-src]').forEach((btn) => {
+          list.push({
+            el: btn,
+            src: btn.getAttribute('data-lightbox-src'),
+            caption: btn.getAttribute('data-lightbox-caption') || '',
+          });
+        });
+        document.querySelectorAll('.prose figure img, .prose > p > img').forEach((img) => {
+          img.removeAttribute('loading');
+          const fig = img.closest('figure');
+          const cap = fig?.querySelector('figcaption')?.textContent || img.getAttribute('alt') || '';
+          list.push({
+            el: img,
+            src: img.getAttribute('src'),
+            caption: cap,
+          });
+        });
+        galleryList = list;
+        list.forEach((item, index) => {
+          item.el.addEventListener('click', () => openLightboxAt(index));
+        });
+      }
+
+      function openLightboxAt(idx) {
+        if (!lb || !lbImg || !galleryList.length) return;
+        currentIdx = (idx + galleryList.length) % galleryList.length;
+        const item = galleryList[currentIdx];
+        lbImg.src = item.src;
+        lbImg.alt = item.caption;
+        if (lbCap) lbCap.textContent = item.caption;
+        if (lbCounter) lbCounter.textContent = `${currentIdx + 1} / ${galleryList.length}`;
+        lb.hidden = false;
+        lb.setAttribute('aria-hidden', 'false');
+      }
+
+      function closeGlobalLightbox() {
+        if (!lb) return;
+        lb.hidden = true;
+        lb.setAttribute('aria-hidden', 'true');
+      }
+
+      collectLightboxItems();
+      lbClose?.addEventListener('click', closeGlobalLightbox);
+      lbPrev?.addEventListener('click', () => openLightboxAt(currentIdx - 1));
+      lbNext?.addEventListener('click', () => openLightboxAt(currentIdx + 1));
+      lb?.addEventListener('click', (e) => {
+        if (e.target === lb) closeGlobalLightbox();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+          e.preventDefault();
+          if (backdrop?.hidden) openCmd();
+          else closeCmd();
+        } else if (e.key === 'Escape') {
+          if (backdrop && !backdrop.hidden) closeCmd();
+          if (lb && !lb.hidden) closeGlobalLightbox();
+          closeMobileDrawer();
+        } else if (lb && !lb.hidden) {
+          if (e.key === 'ArrowLeft') openLightboxAt(currentIdx - 1);
+          if (e.key === 'ArrowRight') openLightboxAt(currentIdx + 1);
+        }
+      });
+    </script>
+
+    <style>
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background-color: var(--bg-glass);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--border-subtle);
+      }
+
+      .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 64px;
+        gap: 1rem;
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-shrink: 0;
+      }
+
+      .mobile-menu-trigger {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        border-radius: var(--radius-sm);
+        background-color: var(--bg-surface-elevated);
+        border: 1px solid var(--border-default);
+        color: var(--text-primary);
+        flex-shrink: 0;
+        transition: background-color 0.15s ease;
+      }
+
+      .mobile-menu-trigger:hover {
+        background-color: var(--bg-surface-hover);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.65rem;
+        height: 38px;
+        padding: 0 0.5rem;
+        border-radius: var(--radius-sm);
+        min-width: 0;
+        transition: background-color 0.15s ease;
+      }
+
+      .brand:hover {
+        background-color: var(--bg-surface-hover);
+      }
+
+      .brand-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        object-fit: cover;
+        object-position: center top;
+        border: 1px solid var(--border-hover);
+        flex-shrink: 0;
+      }
+
+      .brand-text-wrap {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        line-height: 1.2;
+      }
+
+      .brand-name {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        white-space: nowrap;
+      }
+
+      .brand-sub {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        white-space: nowrap;
+      }
+
+      .main-nav {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        flex-shrink: 0;
+      }
+
+      .nav-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        height: 38px;
+        padding: 0 0.7rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: color 0.15s ease, background-color 0.15s ease;
+      }
+
+      .nav-link:hover {
+        color: var(--text-primary);
+        background-color: var(--bg-surface-hover);
+      }
+
+      .nav-link.active {
+        background-color: #242a3a;
+        color: var(--text-primary);
+      }
+
+      :global([data-theme='light']) .nav-link.active {
+        background-color: #e2e5ec;
+        color: var(--text-primary);
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-shrink: 0;
+      }
+
+      .cmd-trigger,
+      .icon-btn,
+      .github-header-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 38px;
+        border-radius: var(--radius-sm);
+        background-color: var(--bg-surface-elevated);
+        border: 1px solid var(--border-default);
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        font-weight: 500;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: color 0.15s ease, background-color 0.15s ease;
+      }
+
+      .cmd-trigger {
+        gap: 0.5rem;
+        padding: 0 0.75rem;
+      }
+
+      .icon-btn {
+        width: 38px;
+      }
+
+      .github-header-btn {
+        gap: 0.45rem;
+        padding: 0 0.75rem;
+        color: var(--text-primary);
+      }
+
+      .cmd-trigger:hover,
+      .icon-btn:hover,
+      .github-header-btn:hover {
+        background-color: var(--bg-surface-hover);
+        color: var(--text-primary);
+      }
+
+      :global([data-theme='dark']) .icon-moon {
+        display: none;
+      }
+      :global([data-theme='light']) .icon-sun {
+        display: none;
+      }
+
+      /* Mobile Drawer */
+      .mobile-drawer-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 70;
+        background-color: rgba(0, 0, 0, 0.55);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s var(--ease-smooth);
+      }
+
+      .mobile-drawer {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 80;
+        width: 280px;
+        background-color: var(--bg-surface);
+        border-right: 1px solid var(--border-default);
+        box-shadow: var(--shadow-modal);
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        transform: translateX(-100%);
+        transition: transform 0.35s var(--ease-smooth);
+      }
+
+      :global(body[data-drawer-open='true']) .mobile-drawer-backdrop {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      :global(body[data-drawer-open='true']) .mobile-drawer {
+        transform: translateX(0);
+      }
+
+      .drawer-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--border-subtle);
+      }
+
+      .drawer-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+      }
+
+      .drawer-close-btn {
+        height: 36px;
+        padding: 0 0.85rem;
+        border-radius: var(--radius-sm);
+        background-color: var(--bg-surface-elevated);
+        border: 1px solid var(--border-default);
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+      }
+
+      .drawer-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+
+      .drawer-link {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        height: 42px;
+        padding: 0 0.75rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+      }
+
+      .drawer-link:hover,
+      .drawer-link.active {
+        background-color: var(--bg-surface-elevated);
+        color: var(--text-primary);
+      }
+
+      .drawer-footer {
+        margin-top: auto;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--border-subtle);
+      }
+
+      .drawer-github {
+        width: 100%;
+      }
+
+      /* Footer */
+      .site-footer {
+        margin-top: 4rem;
+        border-top: 1px solid var(--border-subtle);
+        padding: 2.5rem 0;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+      }
+
+      .footer-inner {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1.5rem;
+      }
+
+      .footer-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-primary);
+        margin-bottom: 0.35rem;
+      }
+
+      .footer-sep {
+        color: var(--text-muted);
+      }
+
+      .footer-note {
+        color: var(--text-muted);
+        font-size: 0.8125rem;
+      }
+
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: var(--font-mono);
+        font-size: 0.8125rem;
+      }
+
+      .footer-links a {
+        display: inline-flex;
+        align-items: center;
+        height: 36px;
+        padding: 0 0.75rem;
+        border-radius: var(--radius-sm);
+        background-color: var(--bg-surface-elevated);
+        border: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+        white-space: nowrap;
+        transition: background-color 0.15s ease, color 0.15s ease;
+      }
+
+      .footer-links a:hover {
+        background-color: var(--bg-surface-hover);
+        color: var(--text-primary);
+      }
+
+      /* Command Palette */
+      .cmd-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        background-color: rgba(0, 0, 0, 0.65);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 10vh 1rem 1rem;
+      }
+
+      .cmd-backdrop[hidden] {
+        display: none;
+      }
+
+      .cmd-modal {
+        width: 100%;
+        max-width: 600px;
+        background-color: var(--bg-surface);
+        border: 1px solid var(--border-hover);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-modal);
+        overflow: hidden;
+      }
+
+      .cmd-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.875rem 1.125rem;
+        border-bottom: 1px solid var(--border-default);
+        color: var(--text-secondary);
+      }
+
+      .cmd-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: var(--text-primary);
+        font-size: 0.9375rem;
+        font-family: inherit;
+      }
+
+      .cmd-esc {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        background-color: var(--bg-surface-elevated);
+        border: 1px solid var(--border-default);
+        color: var(--text-muted);
+      }
+
+      .cmd-body {
+        max-height: 360px;
+        overflow-y: auto;
+        padding: 0.5rem;
+      }
+
+      .cmd-group-label {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text-muted);
+        padding: 0.6rem 0.75rem 0.35rem;
+      }
+
+      .cmd-item {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.65rem 0.75rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.875rem;
+        color: var(--text-primary);
+        text-align: left;
+        transition: background-color 0.15s ease;
+      }
+
+      .cmd-item:hover {
+        background-color: var(--bg-surface-hover);
+      }
+
+      .cmd-item-title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .cmd-item-meta {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      /* Global Lightbox */
+      .global-lightbox {
+        position: fixed;
+        inset: 0;
+        z-index: 120;
+        background-color: rgba(5, 7, 12, 0.88);
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.25rem;
+      }
+
+      .global-lightbox[hidden] {
+        display: none;
+      }
+
+      .global-lightbox-inner {
+        width: 100%;
+        max-width: 960px;
+        max-height: 92vh;
+        background-color: var(--bg-surface);
+        border: 1px solid var(--border-hover);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-modal);
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .global-lightbox-bar {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+
+      .global-lightbox-counter {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--text-muted);
+      }
+
+      .global-lightbox-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+      }
+
+      .lightbox-nav-btn,
+      .lightbox-close-btn {
+        height: 34px;
+        padding: 0 0.75rem;
+        border-radius: var(--radius-sm);
+        background-color: var(--bg-surface-elevated);
+        border: 1px solid var(--border-default);
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--text-primary);
+        white-space: nowrap;
+      }
+
+      .lightbox-nav-btn:hover,
+      .lightbox-close-btn:hover {
+        background-color: var(--bg-surface-hover);
+        border-color: var(--border-hover);
+      }
+
+      .global-lightbox-img {
+        max-width: 100%;
+        max-height: 72vh;
+        border-radius: var(--radius-md);
+        object-fit: contain;
+      }
+
+      .global-lightbox-caption {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        text-align: center;
+      }
+
+      @media (max-width: 1180px) {
+        .cmd-trigger-text,
+        .cmd-trigger kbd,
+        .github-header-btn span {
+          display: none;
+        }
+        .cmd-trigger,
+        .github-header-btn {
+          width: 38px;
+          padding: 0;
+        }
+        .brand-sub {
+          display: none;
+        }
+      }
+
+      @media (max-width: 1023px) {
+        .main-nav {
+          display: none;
+        }
+        .mobile-menu-trigger {
+          display: inline-flex;
+        }
+        .header-left {
+          min-width: 0;
+          flex-shrink: 1;
+        }
+        .brand-sub {
+          display: block;
+        }
+      }
+
+      @media (max-width: 639px) {
+        .github-header-btn {
+          display: none;
+        }
+        .brand-sub {
+          display: none;
+        }
+      }
+    </style>
+  </body>
+</html>

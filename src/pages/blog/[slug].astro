@@ -1,0 +1,201 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import { getCollection, render } from 'astro:content';
+import { SITE_PROFILE } from '../../data/profile';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+function getBadgeClass(category: string) {
+  if (category === 'data-engineering') return 'badge-de';
+  if (category === 'life') return 'badge-life';
+  return 'badge-future';
+}
+---
+
+<BaseLayout
+  title={`${post.data.title} — ${SITE_PROFILE.name}`}
+  description={post.data.description}
+  activeNav="blog"
+>
+  <div class="reading-progress" id="reading-progress"></div>
+
+  <article class="container reader-container">
+    <header class="bento-card article-header reveal-item">
+      <div class="header-top-bar">
+        <a href="/blog" class="back-link">
+          <Icon name="arrow-left" size={15} />
+          <span>Quay lại danh sách bài báo</span>
+        </a>
+        <div class="meta-row">
+          <span class={`badge ${getBadgeClass(post.data.category)}`}>
+            {post.data.categoryLabel}
+          </span>
+          <span class="meta-text">{post.data.pubDate} · {post.data.readingTime}</span>
+        </div>
+      </div>
+
+      <h1 class="reader-title">{post.data.title}</h1>
+      <p class="reader-lead">{post.data.description}</p>
+    </header>
+
+    <div class="bento-card reader-body reveal-item" style="--reveal-delay: 60ms">
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+
+    <footer class="bento-card author-footer reveal-item">
+      <div class="author-info">
+        <strong>Viết bởi {SITE_PROFILE.name}</strong>
+        <p>{SITE_PROFILE.tagline}</p>
+      </div>
+      <div class="author-links">
+        <a href="/blog" class="btn-secondary">Xem các bài báo khác</a>
+        <a href="/projects" class="btn-primary">Xem Dự án & Kỷ niệm</a>
+      </div>
+    </footer>
+  </article>
+
+  <script is:inline>
+    const progressBar = document.getElementById('reading-progress');
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = docHeight > 0 ? Math.min(100, (scrollTop / docHeight) * 100) : 0;
+      if (progressBar) {
+        progressBar.style.width = `${pct}%`;
+      }
+    }, { passive: true });
+  </script>
+
+  <style>
+    .reading-progress {
+      position: fixed;
+      top: 64px;
+      left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-de), var(--accent-future));
+      z-index: 60;
+      transition: width 0.08s linear;
+    }
+
+    .reader-container {
+      max-width: 840px;
+      padding-top: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .article-header {
+      padding: 1.75rem 2rem;
+    }
+
+    .header-top-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 1.15rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      height: 36px;
+      padding: 0 0.75rem;
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .back-link:hover {
+      background-color: var(--bg-surface-hover);
+      color: var(--text-primary);
+    }
+
+    .meta-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .meta-text {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .reader-title {
+      font-size: clamp(1.5rem, 2.8vw, 2.15rem);
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.75rem;
+    }
+
+    .reader-lead {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    .reader-body {
+      padding: 2rem;
+    }
+
+    .author-footer {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .author-info p {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-top: 0.2rem;
+    }
+
+    .author-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+    }
+
+    @media (max-width: 640px) {
+      .article-header,
+      .reader-body {
+        padding: 1.15rem;
+      }
+      .header-top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</BaseLayout>

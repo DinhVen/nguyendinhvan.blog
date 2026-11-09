@@ -1,0 +1,317 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import { getCollection } from 'astro:content';
+import { getEventImages } from '../../utils/event-images';
+
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort(
+  (a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
+);
+
+const postThumbMap: Record<string, string> = {
+  'le-tot-nghiep-cu-nhan-cntt-2026-va-cong-viec-dau-tien':
+    getEventImages('tot-nghiep-cu-nhan')[0] || '/avatar.jpg',
+  'nhin-lai-4-nam-sinh-vien-cntt-dai-hoc-quy-nhon':
+    '/images/events/4-nam-sinh-vien/duoc-bau-lam-bi-thu-chi-doan-cntt45b.jpg',
+  'ky-thuc-tap-tai-tma-solutions-va-nhung-du-an-thoi-sinh-vien':
+    '/images/events/tma-internship/mentor-va-cac-intern.jpg',
+  'tuoi-tre-nhiet-huyet-cung-hoi-sinh-vien-va-doi-tnxk-kcntt':
+    getEventImages('hoi-sinh-vien')[0] || '/avatar.jpg',
+  'dau-an-itqc-san-choi-lap-trinh-khoa-cntt-dai-hoc-quy-nhon':
+    getEventImages('itqc-2023')[0] || '/avatar.jpg',
+  'hanh-trinh-chung-ket-da-nang-code-league-2023':
+    getEventImages('da-nang-code')[0] || '/avatar.jpg',
+  'tam-biet-mai-truong-thpt-ngo-may-phu-cat-khep-lai-tuoi-18':
+    getEventImages('tot-nghiep-lop-12')[0] || '/avatar.jpg',
+  'uoc-mo-mau-xanh-ao-linh-2027': '/avatar.jpg',
+};
+
+const postHeadlineMap: Record<string, string> = {
+  'le-tot-nghiep-cu-nhan-cntt-2026-va-cong-viec-dau-tien': 'Lễ Tốt nghiệp Cử nhân CNTT 30/07/2026',
+  'nhin-lai-4-nam-sinh-vien-cntt-dai-hoc-quy-nhon': 'Nhìn lại 4 năm Sinh viên CNTT — QNU',
+  'ky-thuc-tap-tai-tma-solutions-va-nhung-du-an-thoi-sinh-vien': 'Kỳ thực tập Data Engineering tại TMA',
+  'tuoi-tre-nhiet-huyet-cung-hoi-sinh-vien-va-doi-tnxk-kcntt': 'Tuổi trẻ Hội Sinh viên & Đội TNXK',
+  'dau-an-itqc-san-choi-lap-trinh-khoa-cntt-dai-hoc-quy-nhon': 'Dấu ấn IT QNU Challenge 2023 (ITQC)',
+  'hanh-trinh-chung-ket-da-nang-code-league-2023': 'Ký sự Chung kết Da Nang Code League',
+  'tam-biet-mai-truong-thpt-ngo-may-phu-cat-khep-lai-tuoi-18': 'Tạm biệt mái trường THPT Ngô Mây',
+  'uoc-mo-mau-xanh-ao-linh-2027': 'Ước mơ Màu Xanh Áo Lính năm 2027',
+};
+---
+
+<BaseLayout
+  title="Nhật ký & Bài báo Phóng sự ảnh — Nguyễn Đình Văn"
+  description="Ghi chép về thời sinh viên Đại học Quy Nhơn, kỳ thực tập tại TMA Solutions Bình Định và ước mơ lên đường nhập ngũ năm 2027 phục vụ Quân đội Nhân dân Việt Nam."
+  activeNav="blog"
+>
+  <div class="container page-wrap">
+    <header class="page-header bento-card reveal-item">
+      <div class="section-eyebrow">
+        <Icon name="pen" size={15} />
+        <span>NHẬT KÝ & BÀI BÁO PHÓNG SỰ ẢNH</span>
+      </div>
+      <h1 class="page-title">Ghi chép cuộc sống, thời sinh viên & dự định 2027</h1>
+      <p class="page-desc">
+        Lưu giữ 8 câu chuyện thật kèm hình ảnh tư liệu từ thời cấp 3 THPT Ngô Mây, 4 năm dưới mái trường <strong>Đại học Quy Nhơn</strong>, kỳ thực tập tại <strong>TMA Solutions Bình Định</strong> đến công việc tại <strong>Trung tâm Lưu trữ lịch sử tỉnh Gia Lai</strong> và ước mơ Quân ngũ <strong>2027</strong>.
+      </p>
+
+      <div class="blog-controls">
+        <div class="category-tabs" role="tablist" aria-label="Chọn danh mục bài viết">
+          <button type="button" role="tab" aria-selected="true" class="tab-btn active" data-cat="all">
+            Tất cả
+          </button>
+          <button type="button" role="tab" aria-selected="false" class="tab-btn" data-cat="life">
+            Sinh viên
+          </button>
+          <button type="button" role="tab" aria-selected="false" class="tab-btn" data-cat="data-engineering">
+            Thực tập
+          </button>
+          <button type="button" role="tab" aria-selected="false" class="tab-btn" data-cat="future">
+            Năm 2027
+          </button>
+        </div>
+
+        <input
+          type="search"
+          id="blog-search-input"
+          class="blog-search"
+          placeholder="Tìm bài viết..."
+          aria-label="Tìm kiếm bài viết"
+        />
+      </div>
+    </header>
+
+    <div class="blog-grid" id="blog-grid">
+      {
+        sortedPosts.map((post, idx) => {
+          const cover = postThumbMap[post.id] || '/avatar.jpg';
+          return (
+            <a
+              href={`/blog/${post.id}`}
+              class="article-card bento-card reveal-item"
+              style={`--reveal-delay: ${(idx % 2) * 60}ms`}
+              data-category={post.data.category}
+              data-search={`${post.data.title.toLowerCase()} ${post.data.description.toLowerCase()} ${post.data.tags.join(' ').toLowerCase()}`}
+            >
+              <div class="article-thumb-wrap">
+                <img src={cover} alt={post.data.title} class="article-thumb" />
+              </div>
+
+              <div class="article-content">
+                <div class="article-meta">
+                  {post.data.categoryLabel} · {post.data.pubDate}
+                </div>
+                <h2 class="article-title" title={post.data.title}>{postHeadlineMap[post.id] || post.data.title}</h2>
+              </div>
+            </a>
+          );
+        })
+      }
+    </div>
+  </div>
+
+  <script is:inline>
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const searchInput = document.getElementById('blog-search-input');
+    const cards = document.querySelectorAll('.article-card');
+    let activeCat = 'all';
+
+    function updateList() {
+      const q = (searchInput?.value || '').trim().toLowerCase();
+      cards.forEach((card) => {
+        const cat = card.getAttribute('data-category');
+        const text = card.getAttribute('data-search') || '';
+        const matchCat = activeCat === 'all' || cat === activeCat;
+        const matchSearch = !q || text.includes(q);
+        card.style.display = matchCat && matchSearch ? 'flex' : 'none';
+      });
+    }
+
+    tabBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach((b) => {
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+        activeCat = btn.getAttribute('data-cat') || 'all';
+        updateList();
+      });
+    });
+
+    searchInput?.addEventListener('input', updateList);
+  </script>
+
+  <style>
+    .page-wrap {
+      padding-top: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .page-title {
+      font-size: clamp(1.5rem, 2.6vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.45rem;
+    }
+
+    .page-desc {
+      font-size: 0.9375rem;
+      color: var(--text-secondary);
+      max-width: 72ch;
+      margin-bottom: 1.25rem;
+    }
+
+    .blog-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.85rem;
+    }
+
+    .category-tabs {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 0.35rem;
+    }
+
+    .tab-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 36px;
+      padding: 0 0.7rem;
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .tab-btn:hover {
+      background-color: var(--bg-surface-hover);
+      color: var(--text-primary);
+    }
+
+    .tab-btn.active {
+      background-color: var(--accent-de);
+      color: var(--accent-de-fg);
+      border-color: var(--accent-de);
+      font-weight: 600;
+    }
+
+    .blog-search {
+      height: 38px;
+      padding: 0 0.85rem;
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-default);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.875rem;
+      min-width: 220px;
+    }
+
+    .blog-search::placeholder {
+      color: var(--text-muted);
+      opacity: 1;
+    }
+
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.15rem;
+    }
+
+    .article-card {
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .article-card:hover {
+      background-color: var(--bg-surface-hover);
+    }
+
+    .article-thumb-wrap {
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      background-color: var(--bg-surface-elevated);
+      overflow: hidden;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .article-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .article-content {
+      padding: 1.15rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .article-meta {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .article-title {
+      font-size: 1.0625rem;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--text-primary);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .article-desc {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 860px) {
+      .blog-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .blog-grid {
+        grid-template-columns: 1fr;
+      }
+      .blog-search {
+        width: 100%;
+        min-width: 0;
+      }
+      .page-header {
+        padding: 1rem;
+      }
+      .tab-btn {
+        padding: 0 0.55rem;
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</BaseLayout>
