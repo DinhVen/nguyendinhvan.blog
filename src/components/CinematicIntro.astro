@@ -98,13 +98,6 @@ const track3Items = [
     <span class="c-corner c-corner-bl"></span>
     <span class="c-corner c-corner-br"></span>
 
-    <div class="c-sys-pill">
-      <span class="c-pulse-dot"></span>
-      <span>SYS.BOOT // NGUYENDINHVAN.BLOG</span>
-      <span class="c-pill-sep">::</span>
-      <span class="c-pill-ver">3D MEMORY STREAM</span>
-    </div>
-
     <div class="c-avatar-scanner">
       <div class="c-scanner-ring"></div>
       <div class="c-scanner-sonar"></div>
@@ -114,12 +107,6 @@ const track3Items = [
     </div>
 
     <h2 class="c-hero-name">{SITE_PROFILE.name}</h2>
-
-    <div class="c-role-tags">
-      <span class="c-rtag">Cử nhân CNTT (ĐH Quy Nhơn)</span>
-      <span class="c-rtag">Data Eng Intern (TMA Lab 6)</span>
-      <span class="c-rtag c-rtag-highlight">Hướng tới Quân ngũ 2027</span>
-    </div>
 
     <!-- Live Telemetry & Segmented Progress -->
     <div class="c-telemetry-box">
@@ -140,6 +127,19 @@ const track3Items = [
         <span id="c-telemetry-phase">PHASE 01/04 :: LOADING ARCHIVES</span>
       </div>
     </div>
+
+    <!-- Interactive Enter Button (Hidden while loading, reveals only at 100%) -->
+    <div id="c-enter-wrap" class="c-enter-wrap" aria-hidden="true">
+      <button type="button" id="c-enter-btn" class="c-enter-btn">
+        <span class="c-enter-pulse"></span>
+        <span>Tiến vào Không gian Ký ức</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14"></path>
+          <path d="m12 5 7 7-7 7"></path>
+        </svg>
+      </button>
+      <span class="c-enter-hint">Di chuột để nghiêng bức tường ảnh 3D • Nhấn nút hoặc phím Enter để bắt đầu</span>
+    </div>
   </div>
 </div>
 
@@ -151,6 +151,8 @@ const track3Items = [
     const fillEl = document.getElementById('c-progress-fill');
     const textEl = document.getElementById('c-telemetry-text');
     const phaseEl = document.getElementById('c-telemetry-phase');
+    const enterWrap = document.getElementById('c-enter-wrap');
+    const enterBtn = document.getElementById('c-enter-btn');
 
     if (!intro) return;
 
@@ -161,6 +163,34 @@ const track3Items = [
     }
 
     const holdOpen = params.get('hold') === '1';
+    let isReadyToEnter = false;
+    let isExiting = false;
+
+    function launchIntoWebsite() {
+      if (!isReadyToEnter || isExiting) return;
+      isExiting = true;
+      intro.classList.add('is-warping');
+      setTimeout(() => {
+        intro.classList.add('is-hidden');
+        intro.classList.remove('is-warping');
+        document.body.classList.remove('intro-locked');
+        try {
+          sessionStorage.setItem('ndv-3d-intro-done', '1');
+        } catch {}
+      }, 720);
+    }
+
+    if (enterBtn) {
+      enterBtn.addEventListener('click', launchIntoWebsite);
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (!isReadyToEnter || intro.classList.contains('is-hidden')) return;
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        launchIntoWebsite();
+      }
+    });
 
     // Interactive 3D Mouse Parallax on the 3-Lane Photo Wall
     window.addEventListener(
@@ -169,9 +199,9 @@ const track3Items = [
         if (!viewport3d || intro.classList.contains('is-hidden')) return;
         const nx = (e.clientX / window.innerWidth - 0.5) * 2;
         const ny = (e.clientY / window.innerHeight - 0.5) * 2;
-        const rotX = 12 - ny * 5;
-        const rotY = -6 + nx * 7;
-        viewport3d.style.transform = `perspective(1050px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) rotateZ(-3deg) scale(1.06)`;
+        const rotX = 14 - ny * 6;
+        const rotY = -8 + nx * 8;
+        viewport3d.style.transform = `perspective(980px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) rotateZ(-4deg) scale(1.08)`;
       },
       { passive: true }
     );
@@ -190,21 +220,30 @@ const track3Items = [
         phase: 'PHASE 03/04 :: DIGITIZATION_SYSTEMS',
       },
       {
-        text: '> [04/04] READY: Quyết tâm lên đường Nhập ngũ năm 2027!',
-        phase: 'PHASE 04/04 :: LAUNCHING_PORTFOLIO_VIEWPORT',
+        text: '> [04/04] READY: Đã nạp xong 100% dữ liệu & ký ức!',
+        phase: 'SYSTEM_ONLINE :: SẴN SÀNG TIẾN VÀO TRANG WEB',
       },
     ];
 
+    function revealEnterButton() {
+      isReadyToEnter = true;
+      if (pctEl) pctEl.textContent = '100%';
+      if (fillEl) fillEl.style.width = '100%';
+      if (textEl) textEl.textContent = phases[3].text;
+      if (phaseEl) phaseEl.textContent = phases[3].phase;
+      if (enterWrap) {
+        enterWrap.classList.add('is-ready');
+        enterWrap.setAttribute('aria-hidden', 'false');
+      }
+    }
+
     if (holdOpen) {
       document.body.classList.add('intro-locked');
-      if (pctEl) pctEl.textContent = '86%';
-      if (fillEl) fillEl.style.width = '86%';
-      if (textEl) textEl.textContent = phases[2].text;
-      if (phaseEl) phaseEl.textContent = phases[2].phase;
+      revealEnterButton();
       return;
     }
 
-    // Play once per browser session (or every time user opens the root URL freshly)
+    // Play once per browser session (or every time user reloads)
     let seen = false;
     try {
       seen = sessionStorage.getItem('ndv-3d-intro-done') === '1';
@@ -220,9 +259,9 @@ const track3Items = [
 
     document.body.classList.add('intro-locked');
 
-    const totalDuration = 3600;
+    const totalDuration = 3000;
     const tickMs = 30;
-    const step = 100 / ((totalDuration - 450) / tickMs);
+    const step = 100 / (totalDuration / tickMs);
     let current = 0;
 
     const timer = setInterval(() => {
@@ -231,23 +270,13 @@ const track3Items = [
       if (pctEl) pctEl.textContent = `${String(rounded).padStart(2, '0')}%`;
       if (fillEl) fillEl.style.width = `${current}%`;
 
-      const idx = current < 28 ? 0 : current < 56 ? 1 : current < 84 ? 2 : 3;
+      const idx = current < 32 ? 0 : current < 65 ? 1 : current < 98 ? 2 : 3;
       if (textEl) textEl.textContent = phases[idx].text;
       if (phaseEl) phaseEl.textContent = phases[idx].phase;
 
       if (current >= 100) {
         clearInterval(timer);
-        setTimeout(() => {
-          intro.classList.add('is-warping');
-          setTimeout(() => {
-            intro.classList.add('is-hidden');
-            intro.classList.remove('is-warping');
-            document.body.classList.remove('intro-locked');
-            try {
-              sessionStorage.setItem('ndv-3d-intro-done', '1');
-            } catch {}
-          }, 720);
-        }, 280);
+        revealEnterButton();
       }
     }, tickMs);
   })();
@@ -741,6 +770,91 @@ const track3Items = [
     letter-spacing: 0.04em;
   }
 
+  /* Interactive Enter Button (Reveals at 100%) */
+  .c-enter-wrap {
+    width: 100%;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transform: translate3d(0, 10px, 0) scale(0.96);
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.55rem;
+    transition:
+      max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+      margin-top 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .c-enter-wrap.is-ready {
+    max-height: 110px;
+    opacity: 1;
+    margin-top: 0.35rem;
+    transform: translate3d(0, 0, 0) scale(1);
+    pointer-events: auto;
+  }
+
+  .c-enter-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    height: 46px;
+    padding: 0 1.65rem;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #2dd4bf 0%, #38bdf8 100%);
+    color: #031518;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
+    box-shadow:
+      0 8px 28px rgba(45, 212, 191, 0.42),
+      0 0 0 1px rgba(255, 255, 255, 0.28) inset;
+    cursor: pointer;
+    transition:
+      filter 0.18s ease,
+      box-shadow 0.18s ease;
+  }
+
+  .c-enter-btn:hover {
+    filter: brightness(1.08);
+    box-shadow:
+      0 12px 36px rgba(56, 189, 248, 0.58),
+      0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+  }
+
+  .c-enter-pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #031518;
+    box-shadow: 0 0 0 0 rgba(3, 21, 24, 0.6);
+    animation: c-btn-dot 1.6s infinite;
+  }
+
+  @keyframes c-btn-dot {
+    0% {
+      box-shadow: 0 0 0 0 rgba(3, 21, 24, 0.55);
+    }
+    70% {
+      box-shadow: 0 0 0 7px rgba(3, 21, 24, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(3, 21, 24, 0);
+    }
+  }
+
+  .c-enter-hint {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: #94a3b8;
+  }
+
   @media (max-width: 639px) {
     .c-portal-card {
       padding: 1.5rem 1.15rem;
@@ -749,11 +863,8 @@ const track3Items = [
       width: 210px;
       height: 135px;
     }
-    .c-pill-ver,
-    .c-pill-sep {
-      display: none;
-    }
-    .c-telemetry-sub span:first-child {
+    .c-telemetry-sub span:first-child,
+    .c-enter-hint {
       display: none;
     }
   }
