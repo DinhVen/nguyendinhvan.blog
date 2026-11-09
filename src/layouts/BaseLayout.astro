@@ -12,7 +12,7 @@ interface Props {
 }
 
 const {
-  title = `${SITE_PROFILE.name} — Trang cá nhân & Nhật ký hành trình`,
+  title = 'nguyendinhvan',
   description = SITE_PROFILE.bio,
   activeNav = 'home',
 } = Astro.props;
@@ -30,7 +30,7 @@ const sortedPosts = allPosts.sort(
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="data:," />
     <script is:inline>
       (function () {
         const saved = localStorage.getItem('ndv-theme');
