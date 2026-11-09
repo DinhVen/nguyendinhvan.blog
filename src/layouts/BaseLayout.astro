@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Icon from '../components/Icon.astro';
+import CinematicIntro from '../components/CinematicIntro.astro';
 import { SITE_PROFILE } from '../data/profile';
 import { getCollection } from 'astro:content';
 
@@ -40,6 +41,8 @@ const sortedPosts = allPosts.sort(
     </script>
   </head>
   <body>
+    <CinematicIntro />
+
     <!-- Ambient Moving Background (Aurora + Subtle Data Grid + Interactive Nodes Canvas) -->
     <div class="ambient-bg" aria-hidden="true">
       <div class="aurora-blob aurora-blob-1"></div>

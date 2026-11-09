@@ -1,0 +1,760 @@
+---
+import { SITE_PROFILE } from '../data/profile';
+import { getEventImages } from '../utils/event-images';
+
+const gradPhotos = getEventImages('tot-nghiep-cu-nhan');
+const dncPhotos = getEventImages('da-nang-code');
+const itqcPhotos = getEventImages('itqc-2023');
+const tnxkPhotos = getEventImages('tnxk-kcntt');
+const hsvPhotos = getEventImages('hoi-sinh-vien');
+const c3Photos = getEventImages('tot-nghiep-lop-12');
+
+const track1Items = [
+  { src: gradPhotos[0] || '/avatar.jpg', tag: 'QNU // 30.07.2026', label: 'Tân Cử nhân CNTT' },
+  { src: '/images/events/tma-internship/mentor-va-cac-intern.jpg', tag: 'TMA // LAB 06', label: 'Data Engineering Intern' },
+  { src: dncPhotos[0] || '/avatar.jpg', tag: 'DNCL // ĐÀ NẴNG', label: 'Chung kết Code League' },
+  { src: itqcPhotos[0] || '/avatar.jpg', tag: 'ITQC // QNU 2023', label: 'Giải Khuyến khích ITQC' },
+  { src: '/images/events/di-lam/nhan-vien-so-hoa-trung-tam-luu-tru-tinh-gia-lai.jpg', tag: 'GIALAI // ARCHIVE', label: 'Trung tâm Lưu trữ lịch sử' },
+  { src: '/images/events/4-nam-sinh-vien/duoc-bau-lam-bi-thu-chi-doan-cntt45b.jpg', tag: 'K45B // CHI ĐOÀN', label: 'Bí thư Chi đoàn CNTT45B' },
+];
+
+const track2Items = [
+  { src: gradPhotos[1] || gradPhotos[0] || '/avatar.jpg', tag: 'DEGREE // GPA 2.80', label: 'Lễ trao bằng Tốt nghiệp' },
+  { src: hsvPhotos[0] || '/avatar.jpg', tag: 'HSV // BÌNH ĐỊNH', label: 'Đại biểu Hội Sinh viên' },
+  { src: tnxkPhotos[0] || '/avatar.jpg', tag: 'TNXK // KHOA CNTT', label: 'Đội Thanh niên Xung kích' },
+  { src: '/images/events/4-nam-sinh-vien/hoc-boi-duong-nhan-thuc-dang.jpg', tag: 'QNU // NHẬN THỨC ĐẢNG', label: 'Lớp Cảm tình Đảng' },
+  { src: '/images/events/tma-internship/1794230588261_1769792567978865343_6694692413333017048_fb7adba94d4d9c510d8262a945ab01c9.jpg', tag: 'TMA // ID NO. 365', label: 'Thực tập Doanh nghiệp' },
+  { src: c3Photos[0] || '/avatar.jpg', tag: 'THPT // NGÔ MÂY', label: 'Học sinh Giỏi Lớp 12' },
+];
+
+const track3Items = [
+  { src: gradPhotos[2] || gradPhotos[0] || '/avatar.jpg', tag: 'FAMILY // 2026', label: 'Ngày vui bên Gia đình' },
+  { src: dncPhotos[1] || dncPhotos[0] || '/avatar.jpg', tag: 'S-CODER // TEAM', label: 'Đội thi Lập trình Đà Nẵng' },
+  { src: '/images/events/4-nam-sinh-vien/chay-su-kien-lon-nhat-gia-lai-2026.jpg', tag: 'EVENT // QUY NHƠN', label: 'Hậu cần Sự kiện & Concert' },
+  { src: tnxkPhotos[1] || tnxkPhotos[0] || '/avatar.jpg', tag: 'YOUTH // KCNTT', label: 'Tuổi trẻ Khoa CNTT' },
+  { src: itqcPhotos[1] || itqcPhotos[0] || '/avatar.jpg', tag: 'ALGO // CONTEST', label: 'Phòng máy Thi đấu ITQC' },
+  { src: gradPhotos[3] || gradPhotos[0] || '/avatar.jpg', tag: 'TARGET // 2027', label: 'Hướng tới Màu Xanh Áo Lính' },
+];
+---
+
+<!-- Mandatory 3D Memory Reel Intro (No Skip Button - Auto Warp at 100%) -->
+<div id="cinematic-intro" class="c-intro" aria-label="Không gian ký ức 3D Nguyễn Đình Văn">
+  <!-- 3D Perspective Cinema Wall Background -->
+  <div class="c-intro-bg">
+    <div class="c-aurora c-aurora-1"></div>
+    <div class="c-aurora c-aurora-2"></div>
+    <div class="c-aurora c-aurora-3"></div>
+    <div class="c-cyber-grid"></div>
+
+    <div class="c-3d-viewport" id="c-3d-viewport" aria-hidden="true">
+      <!-- Lane 1 (Moves Left) -->
+      <div class="c-reel-track c-track-1">
+        {track1Items.concat(track1Items).map((item) => (
+          <div class="c-memory-card">
+            <img src={item.src} alt="" />
+            <div class="c-card-overlay">
+              <span class="c-card-tag">{item.tag}</span>
+              <span class="c-card-label">{item.label}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Lane 2 (Moves Right) -->
+      <div class="c-reel-track c-track-2">
+        {track2Items.concat(track2Items).map((item) => (
+          <div class="c-memory-card">
+            <img src={item.src} alt="" />
+            <div class="c-card-overlay">
+              <span class="c-card-tag">{item.tag}</span>
+              <span class="c-card-label">{item.label}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Lane 3 (Moves Left Faster) -->
+      <div class="c-reel-track c-track-3">
+        {track3Items.concat(track3Items).map((item) => (
+          <div class="c-memory-card">
+            <img src={item.src} alt="" />
+            <div class="c-card-overlay">
+              <span class="c-card-tag">{item.tag}</span>
+              <span class="c-card-label">{item.label}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Center Radial Vignette to keep HUD crisp while showing bright 3D photos around -->
+    <div class="c-vignette"></div>
+  </div>
+
+  <!-- Central IT / Cyber Portal HUD -->
+  <div class="c-portal-card" id="c-portal-card">
+    <span class="c-corner c-corner-tl"></span>
+    <span class="c-corner c-corner-tr"></span>
+    <span class="c-corner c-corner-bl"></span>
+    <span class="c-corner c-corner-br"></span>
+
+    <div class="c-sys-pill">
+      <span class="c-pulse-dot"></span>
+      <span>SYS.BOOT // NGUYENDINHVAN.BLOG</span>
+      <span class="c-pill-sep">::</span>
+      <span class="c-pill-ver">3D MEMORY STREAM</span>
+    </div>
+
+    <div class="c-avatar-scanner">
+      <div class="c-scanner-ring"></div>
+      <div class="c-scanner-sonar"></div>
+      <div class="c-avatar-frame">
+        <img src={SITE_PROFILE.avatar} alt={SITE_PROFILE.name} class="c-avatar-img" />
+      </div>
+    </div>
+
+    <h2 class="c-hero-name">{SITE_PROFILE.name}</h2>
+
+    <div class="c-role-tags">
+      <span class="c-rtag">Cử nhân CNTT (ĐH Quy Nhơn)</span>
+      <span class="c-rtag">Data Eng Intern (TMA Lab 6)</span>
+      <span class="c-rtag c-rtag-highlight">Hướng tới Quân ngũ 2027</span>
+    </div>
+
+    <!-- Live Telemetry & Segmented Progress -->
+    <div class="c-telemetry-box">
+      <div class="c-telemetry-top">
+        <span id="c-telemetry-text" class="c-telemetry-text">
+          &gt; INITIALIZING_MEMORY_REEL [QNU_2022_2026]...
+        </span>
+        <span id="c-telemetry-pct" class="c-telemetry-pct">00%</span>
+      </div>
+
+      <div class="c-progress-bar-wrap">
+        <div id="c-progress-fill" class="c-progress-fill"></div>
+        <div class="c-progress-segments"></div>
+      </div>
+
+      <div class="c-telemetry-sub">
+        <span>STREAM: 60FPS_3D_REEL</span>
+        <span id="c-telemetry-phase">PHASE 01/04 :: LOADING ARCHIVES</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function init3DMemoryIntro() {
+    const intro = document.getElementById('cinematic-intro');
+    const viewport3d = document.getElementById('c-3d-viewport');
+    const pctEl = document.getElementById('c-telemetry-pct');
+    const fillEl = document.getElementById('c-progress-fill');
+    const textEl = document.getElementById('c-telemetry-text');
+    const phaseEl = document.getElementById('c-telemetry-phase');
+
+    if (!intro) return;
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('skipIntro') === '1') {
+      intro.classList.add('is-hidden');
+      return;
+    }
+
+    const holdOpen = params.get('hold') === '1';
+
+    // Interactive 3D Mouse Parallax on the 3-Lane Photo Wall
+    window.addEventListener(
+      'mousemove',
+      (e) => {
+        if (!viewport3d || intro.classList.contains('is-hidden')) return;
+        const nx = (e.clientX / window.innerWidth - 0.5) * 2;
+        const ny = (e.clientY / window.innerHeight - 0.5) * 2;
+        const rotX = 12 - ny * 5;
+        const rotY = -6 + nx * 7;
+        viewport3d.style.transform = `perspective(1050px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) rotateZ(-3deg) scale(1.06)`;
+      },
+      { passive: true }
+    );
+
+    const phases = [
+      {
+        text: '> [01/04] SYNC: Cử nhân CNTT — ĐH Quy Nhơn (2022–2026)',
+        phase: 'PHASE 01/04 :: ACADEMIC_RECORD [GPA 2.80/4]',
+      },
+      {
+        text: '> [02/04] PIPE: TMA Solutions Lab 6 — Spark / Kafka / CDC',
+        phase: 'PHASE 02/04 :: DATA_ENGINEERING_PIPELINE',
+      },
+      {
+        text: '> [03/04] ARCHIVE: Trung tâm Lưu trữ lịch sử — Sở Nội vụ',
+        phase: 'PHASE 03/04 :: DIGITIZATION_SYSTEMS',
+      },
+      {
+        text: '> [04/04] READY: Quyết tâm lên đường Nhập ngũ năm 2027!',
+        phase: 'PHASE 04/04 :: LAUNCHING_PORTFOLIO_VIEWPORT',
+      },
+    ];
+
+    if (holdOpen) {
+      document.body.classList.add('intro-locked');
+      if (pctEl) pctEl.textContent = '86%';
+      if (fillEl) fillEl.style.width = '86%';
+      if (textEl) textEl.textContent = phases[2].text;
+      if (phaseEl) phaseEl.textContent = phases[2].phase;
+      return;
+    }
+
+    // Play once per browser session (or every time user opens the root URL freshly)
+    let seen = false;
+    try {
+      seen = sessionStorage.getItem('ndv-3d-intro-done') === '1';
+    } catch {}
+
+    const navEntry = performance.getEntriesByType?.('navigation')?.[0];
+    const isReload = navEntry && navEntry.type === 'reload';
+
+    if (seen && !isReload && !params.has('intro')) {
+      intro.classList.add('is-hidden');
+      return;
+    }
+
+    document.body.classList.add('intro-locked');
+
+    const totalDuration = 3600;
+    const tickMs = 30;
+    const step = 100 / ((totalDuration - 450) / tickMs);
+    let current = 0;
+
+    const timer = setInterval(() => {
+      current = Math.min(100, current + step);
+      const rounded = Math.round(current);
+      if (pctEl) pctEl.textContent = `${String(rounded).padStart(2, '0')}%`;
+      if (fillEl) fillEl.style.width = `${current}%`;
+
+      const idx = current < 28 ? 0 : current < 56 ? 1 : current < 84 ? 2 : 3;
+      if (textEl) textEl.textContent = phases[idx].text;
+      if (phaseEl) phaseEl.textContent = phases[idx].phase;
+
+      if (current >= 100) {
+        clearInterval(timer);
+        setTimeout(() => {
+          intro.classList.add('is-warping');
+          setTimeout(() => {
+            intro.classList.add('is-hidden');
+            intro.classList.remove('is-warping');
+            document.body.classList.remove('intro-locked');
+            try {
+              sessionStorage.setItem('ndv-3d-intro-done', '1');
+            } catch {}
+          }, 720);
+        }, 280);
+      }
+    }, tickMs);
+  })();
+</script>
+
+<style is:global>
+  body.intro-locked {
+    overflow: hidden;
+  }
+
+  .c-intro {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background-color: #05070c;
+    color: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    overflow: hidden;
+    transition:
+      opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .c-intro.is-warping {
+    opacity: 0;
+    transform: scale(1.26);
+    filter: blur(12px);
+    pointer-events: none;
+  }
+
+  .c-intro.is-hidden {
+    display: none !important;
+  }
+
+  /* Background + 3-Lane 3D Cinema Wall */
+  .c-intro-bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .c-aurora {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(85px);
+    opacity: 0.65;
+    animation: c-aurora-float 7s ease-in-out infinite alternate;
+  }
+
+  .c-aurora-1 {
+    width: 560px;
+    height: 560px;
+    top: -160px;
+    left: -80px;
+    background: radial-gradient(circle, rgba(45, 212, 191, 0.5), transparent 70%);
+  }
+
+  .c-aurora-2 {
+    width: 560px;
+    height: 560px;
+    bottom: -160px;
+    right: -80px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.45), transparent 70%);
+    animation-delay: -3s;
+  }
+
+  .c-aurora-3 {
+    width: 440px;
+    height: 440px;
+    top: 30%;
+    left: 40%;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.3), transparent 70%);
+    animation-delay: -5s;
+  }
+
+  @keyframes c-aurora-float {
+    0% {
+      transform: scale(0.95) translate3d(0, 0, 0);
+    }
+    100% {
+      transform: scale(1.1) translate3d(28px, -20px, 0);
+    }
+  }
+
+  .c-cyber-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(45, 212, 191, 0.07) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(45, 212, 191, 0.07) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+
+  .c-3d-viewport {
+    position: absolute;
+    inset: -12% -16%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.35rem;
+    transform: perspective(980px) rotateX(14deg) rotateY(-8deg) rotateZ(-4deg) scale(1.08);
+    transform-style: preserve-3d;
+    transition: transform 0.25s ease-out;
+    opacity: 0.92;
+  }
+
+  .c-reel-track {
+    display: flex;
+    gap: 1.25rem;
+    width: max-content;
+  }
+
+  .c-track-1 {
+    animation: c-scroll-left 26s linear infinite;
+  }
+
+  .c-track-2 {
+    animation: c-scroll-right 30s linear infinite;
+  }
+
+  .c-track-3 {
+    animation: c-scroll-left 22s linear infinite;
+  }
+
+  @keyframes c-scroll-left {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  @keyframes c-scroll-right {
+    from {
+      transform: translate3d(-50%, 0, 0);
+    }
+    to {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  .c-memory-card {
+    position: relative;
+    width: 320px;
+    height: 205px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(45, 212, 191, 0.48);
+    box-shadow:
+      0 18px 40px rgba(0, 0, 0, 0.72),
+      0 0 26px rgba(45, 212, 191, 0.2);
+    background: #0d121d;
+    flex-shrink: 0;
+  }
+
+  .c-memory-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(1.18) contrast(1.08) brightness(1.05);
+  }
+
+  .c-card-overlay {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 0.65rem 0.85rem;
+    background: linear-gradient(to top, rgba(5, 7, 12, 0.94) 18%, rgba(5, 7, 12, 0.45) 75%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.12rem;
+  }
+
+  .c-card-tag {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #2dd4bf;
+    letter-spacing: 0.05em;
+  }
+
+  .c-card-label {
+    font-family: var(--font-display);
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #f8fafc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .c-vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(5, 7, 12, 0.55) 0%,
+      rgba(5, 7, 12, 0.28) 45%,
+      rgba(5, 7, 12, 0.68) 100%
+    );
+  }
+
+  /* Central IT Portal HUD Card */
+  .c-portal-card {
+    position: relative;
+    z-index: 5;
+    width: 100%;
+    max-width: 580px;
+    padding: 2.25rem 2rem;
+    border-radius: 22px;
+    background: rgba(11, 15, 24, 0.86);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    border: 1px solid rgba(45, 212, 191, 0.38);
+    box-shadow:
+      0 30px 90px rgba(0, 0, 0, 0.85),
+      0 0 70px rgba(45, 212, 191, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.95rem;
+    animation: c-portal-appear 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes c-portal-appear {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 24px, 0) scale(0.94);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+  }
+
+  /* Tech Corner Brackets */
+  .c-corner {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: #2dd4bf;
+    border-style: solid;
+    pointer-events: none;
+  }
+  .c-corner-tl {
+    top: 10px;
+    left: 10px;
+    border-width: 2px 0 0 2px;
+    border-top-left-radius: 6px;
+  }
+  .c-corner-tr {
+    top: 10px;
+    right: 10px;
+    border-width: 2px 2px 0 0;
+    border-top-right-radius: 6px;
+  }
+  .c-corner-bl {
+    bottom: 10px;
+    left: 10px;
+    border-width: 0 0 2px 2px;
+    border-bottom-left-radius: 6px;
+  }
+  .c-corner-br {
+    bottom: 10px;
+    right: 10px;
+    border-width: 0 2px 2px 0;
+    border-bottom-right-radius: 6px;
+  }
+
+  .c-sys-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 9999px;
+    background: rgba(45, 212, 191, 0.12);
+    border: 1px solid rgba(45, 212, 191, 0.34);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #5eead4;
+    letter-spacing: 0.06em;
+  }
+
+  .c-pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: #2dd4bf;
+    box-shadow: 0 0 12px #2dd4bf;
+    animation: c-dot-blink 1.2s ease-in-out infinite alternate;
+  }
+
+  @keyframes c-dot-blink {
+    from {
+      opacity: 0.4;
+      transform: scale(0.85);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1.15);
+    }
+  }
+
+  .c-pill-sep {
+    color: #38bdf8;
+  }
+
+  .c-pill-ver {
+    color: #bae6fd;
+  }
+
+  /* Avatar with Rotating Radar Scanner */
+  .c-avatar-scanner {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0.25rem 0;
+  }
+
+  .c-scanner-ring {
+    position: absolute;
+    inset: -5px;
+    border-radius: 24px;
+    background: conic-gradient(from 0deg, transparent 0%, #2dd4bf 35%, #38bdf8 50%, transparent 60%);
+    animation: c-spin 2.6s linear infinite;
+    opacity: 0.85;
+  }
+
+  .c-scanner-sonar {
+    position: absolute;
+    inset: -10px;
+    border-radius: 28px;
+    border: 1px dashed rgba(56, 189, 248, 0.45);
+    animation: c-spin-reverse 8s linear infinite;
+  }
+
+  @keyframes c-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes c-spin-reverse {
+    to {
+      transform: rotate(-360deg);
+    }
+  }
+
+  .c-avatar-frame {
+    position: relative;
+    z-index: 2;
+    width: 88px;
+    height: 88px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #111827;
+    border: 2px solid #0b0f18;
+  }
+
+  .c-avatar-img {
+    width: 100%;
+    height: calc(100% + 10px);
+    margin-top: -10px;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .c-hero-name {
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 4.2vw, 2.75rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.12;
+    background: linear-gradient(135deg, #ffffff 25%, #5eead4 65%, #38bdf8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .c-role-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+  }
+
+  .c-rtag {
+    padding: 0.28rem 0.65rem;
+    border-radius: 8px;
+    background: rgba(30, 41, 59, 0.65);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    color: #e2e8f0;
+  }
+
+  .c-rtag-highlight {
+    background: rgba(56, 189, 248, 0.14);
+    border-color: rgba(56, 189, 248, 0.38);
+    color: #7dd3fc;
+    font-weight: 600;
+  }
+
+  /* Telemetry & Segmented Progress Bar */
+  .c-telemetry-box {
+    width: 100%;
+    margin-top: 0.45rem;
+    padding: 0.95rem 1.1rem;
+    border-radius: 14px;
+    background: rgba(6, 9, 15, 0.85);
+    border: 1px solid rgba(45, 212, 191, 0.24);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: left;
+    font-family: var(--font-mono);
+  }
+
+  .c-telemetry-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .c-telemetry-text {
+    font-size: 0.76rem;
+    color: #e2e8f0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .c-telemetry-pct {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #2dd4bf;
+    text-shadow: 0 0 14px rgba(45, 212, 191, 0.45);
+    flex-shrink: 0;
+  }
+
+  .c-progress-bar-wrap {
+    position: relative;
+    width: 100%;
+    height: 10px;
+    border-radius: 6px;
+    background: rgba(30, 41, 59, 0.85);
+    overflow: hidden;
+    border: 1px solid rgba(45, 212, 191, 0.22);
+  }
+
+  .c-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #14b8a6 0%, #2dd4bf 55%, #38bdf8 100%);
+    box-shadow: 0 0 18px rgba(45, 212, 191, 0.65);
+    transition: width 0.06s linear;
+  }
+
+  .c-progress-segments {
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 14px,
+      rgba(6, 9, 15, 0.65) 14px,
+      rgba(6, 9, 15, 0.65) 16px
+    );
+    pointer-events: none;
+  }
+
+  .c-telemetry-sub {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.68rem;
+    color: #64748b;
+    letter-spacing: 0.04em;
+  }
+
+  @media (max-width: 639px) {
+    .c-portal-card {
+      padding: 1.5rem 1.15rem;
+    }
+    .c-memory-card {
+      width: 210px;
+      height: 135px;
+    }
+    .c-pill-ver,
+    .c-pill-sep {
+      display: none;
+    }
+    .c-telemetry-sub span:first-child {
+      display: none;
+    }
+  }
+</style>
