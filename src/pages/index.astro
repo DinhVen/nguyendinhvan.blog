@@ -63,9 +63,24 @@ const milestonesWithPhotos = STUDENT_MILESTONES.map((item) => {
           </div>
           <div class="hero-text-col">
             <h1 class="hero-name">{SITE_PROFILE.name}</h1>
-            <p class="hero-role">
-              Cử nhân CNTT (ĐH Quy Nhơn) · Nhân viên Số hóa (Trung tâm Lưu trữ lịch sử tỉnh Gia Lai)
-            </p>
+            <div class="hero-roles-stack">
+              <div class="role-entry role-edu">
+                <span class="role-icon">
+                  <Icon name="graduation" size={14} />
+                </span>
+                <span class="role-title">Cử nhân CNTT</span>
+                <span class="role-sep">·</span>
+                <span class="role-org">Trường Đại học Quy Nhơn</span>
+              </div>
+              <div class="role-entry role-work">
+                <span class="role-icon">
+                  <Icon name="briefcase" size={14} />
+                </span>
+                <span class="role-title">Nhân viên Số hóa</span>
+                <span class="role-sep">·</span>
+                <span class="role-org">Trung tâm Lưu trữ lịch sử tỉnh Gia Lai</span>
+              </div>
+            </div>
             <p class="hero-bio">
               Tốt nghiệp Cử nhân Công nghệ Thông tin (Hệ thống Thông tin) tại Trường Đại học Quy Nhơn, từng thực tập Data Engineering tại TMA Solutions Bình Định. Nơi lưu giữ kỷ niệm thời sinh viên, các dự án đã làm và ước mơ trở thành Sĩ quan / Quân nhân chuyên nghiệp trong Quân đội Nhân dân Việt Nam.
             </p>
@@ -317,10 +332,60 @@ const milestonesWithPhotos = STUDENT_MILESTONES.map((item) => {
       line-height: 1.2;
     }
 
-    .hero-role {
-      font-size: 0.875rem;
-      font-weight: 500;
+    .hero-roles-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin: 0.15rem 0 0.1rem;
+    }
+
+    .role-entry {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      font-size: 0.84375rem;
+      line-height: 1.35;
+    }
+
+    .role-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .role-edu .role-icon {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      border-color: rgba(16, 185, 129, 0.25);
+    }
+
+    .role-work .role-icon {
+      background: rgba(56, 189, 248, 0.12);
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.25);
+    }
+
+    .role-title {
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+
+    .role-sep {
+      color: var(--text-muted);
+      opacity: 0.5;
+      font-size: 0.75rem;
+    }
+
+    .role-org {
       color: var(--text-secondary);
+      font-weight: 400;
     }
 
     .hero-bio {
