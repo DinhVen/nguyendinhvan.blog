@@ -259,16 +259,15 @@ const track3Items = [
       return;
     }
 
-    // Play once per browser session (or every time user reloads)
+    // Play strictly once per browser tab session:
+    // - Pressing F5 or switching pages keeps sessionStorage, so intro won't replay.
+    // - Closing the tab/browser clears sessionStorage automatically, so next visit plays intro again.
     let seen = false;
     try {
       seen = sessionStorage.getItem('ndv-3d-intro-done') === '1';
     } catch {}
 
-    const navEntry = performance.getEntriesByType?.('navigation')?.[0];
-    const isReload = navEntry && navEntry.type === 'reload';
-
-    if (seen && !isReload && !params.has('intro')) {
+    if (seen && !params.has('intro')) {
       intro.classList.add('is-hidden');
       return;
     }
