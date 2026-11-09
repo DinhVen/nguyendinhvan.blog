@@ -1,0 +1,449 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { SITE_PROFILE, STUDENT_MILESTONES } from '../data/profile';
+import { getEventImages } from '../utils/event-images';
+
+function getMilestoneIcon(type: string) {
+  if (type === 'education') return 'graduation';
+  if (type === 'internship') return 'briefcase';
+  if (type === 'achievement') return 'award';
+  return 'user';
+}
+
+const milestonesWithPhotos = STUDENT_MILESTONES.map((item) => ({
+  ...item,
+  photos: getEventImages(item.imageFolder),
+}));
+---
+
+<BaseLayout
+  title={`Hành trình Sinh viên, Thực tập & Cột mốc — ${SITE_PROFILE.name}`}
+  description="9 cột mốc học tập tại Trường Đại học Quy Nhơn, kỳ thực tập tại TMA Solutions Bình Định, công việc tại Trung tâm Lưu trữ lịch sử tỉnh Gia Lai và hoạt động Đoàn - Hội."
+  activeNav="milestones"
+>
+  <div class="container page-wrap">
+    <!-- Page Header -->
+    <header class="page-header bento-card">
+      <div class="section-eyebrow">
+        <Icon name="graduation" size={15} />
+        <span>HỌC VẤN • THỰC TẬP • CUỘC THI • HOẠT ĐỘNG ĐOÀN - HỘI</span>
+      </div>
+      <h1 class="page-title">9 Cột mốc Đời sinh viên, Thực tập & Công tác</h1>
+      <p class="page-desc">
+        Tổng hợp chân thực quãng đời học tập tại <strong>Trường THPT Ngô Mây</strong>, 4 năm đại học tại <strong>Trường Đại học Quy Nhơn (09/2022 – 30/07/2026)</strong>, kỳ thực tập tại <strong>TMA Solutions Bình Định</strong> và công việc tại <strong>Trung tâm Lưu trữ lịch sử tỉnh Gia Lai</strong>.
+      </p>
+
+      <div class="filter-bar" role="tablist" aria-label="Lọc cột mốc theo nhóm">
+        <button type="button" class="filter-btn active" data-ms-filter="all">Tất cả (9)</button>
+        <button type="button" class="filter-btn" data-ms-filter="education">Học tập & Bằng cấp</button>
+        <button type="button" class="filter-btn" data-ms-filter="internship">Thực tập & Công tác</button>
+        <button type="button" class="filter-btn" data-ms-filter="achievement">Cuộc thi & Đoàn - Hội</button>
+      </div>
+    </header>
+
+    <!-- 9 Student Life, Internship & Achievements Milestones -->
+    <section class="timeline-section bento-card" aria-label="9 Cột mốc quãng đời sinh viên và thực tập">
+      <div class="milestone-grid" id="milestone-grid">
+        {
+          milestonesWithPhotos.map((item) => (
+            <article
+              class="milestone-card"
+              data-ms-type={item.type === 'activity' ? 'achievement' : item.type}
+            >
+              <div class="ms-header">
+                <div class="ms-header-left">
+                  <span class="ms-icon">
+                    <Icon name={getMilestoneIcon(item.type)} size={16} />
+                  </span>
+                  <span class="ms-period">{item.period}</span>
+                </div>
+                {item.blogUrl && (
+                  <a href={item.blogUrl} class="ms-article-link">
+                    <span>Đọc bài báo</span>
+                    <Icon name="arrow-right" size={13} />
+                  </a>
+                )}
+              </div>
+
+              <h2 class="ms-title" title={item.title}>{item.title}</h2>
+              <div class="ms-org" title={item.organization}>{item.organization}</div>
+              <p class="ms-desc">{item.description}</p>
+
+              {item.photos.length > 0 && (
+                <div class="ms-gallery">
+                  <div class="ms-gallery-label">
+                    <Icon name="folder" size={13} />
+                    <span>Album tư liệu ({item.photos.length} ảnh)</span>
+                  </div>
+                  <div class="ms-photo-grid">
+                    {item.photos.slice(0, 4).map((photoUrl, pIdx) => (
+                      <button
+                        type="button"
+                        class="ms-photo-btn"
+                        data-lightbox-src={photoUrl}
+                        data-lightbox-caption={`${item.title} — Ảnh ${pIdx + 1}/${item.photos.length}`}
+                        aria-label={`Xem ảnh ${pIdx + 1} của ${item.title}`}
+                      >
+                        <img src={photoUrl} alt={`${item.title} - ảnh ${pIdx + 1}`} />
+                        {pIdx === 3 && item.photos.length > 4 && (
+                          <span class="ms-photo-more">+{item.photos.length - 4}</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </article>
+          ))
+        }
+      </div>
+    </section>
+  </div>
+
+  <!-- Photo Lightbox Modal -->
+  <div id="photo-lightbox" class="lightbox-backdrop" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Xem ảnh phóng to">
+    <div class="lightbox-content">
+      <button type="button" id="lightbox-close" class="lightbox-close-btn" aria-label="Đóng ảnh">
+        <Icon name="close" size={18} />
+        <span>Đóng (ESC)</span>
+      </button>
+      <img id="lightbox-img" src="" alt="" class="lightbox-img" />
+      <p id="lightbox-caption" class="lightbox-caption"></p>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const filterBtns = document.querySelectorAll<HTMLButtonElement>('[data-ms-filter]');
+  const cards = document.querySelectorAll<HTMLElement>('.milestone-card');
+
+  filterBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-ms-filter') || 'all';
+      filterBtns.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      cards.forEach((card) => {
+        const type = card.getAttribute('data-ms-type');
+        const show = target === 'all' || type === target;
+        card.style.display = show ? 'flex' : 'none';
+      });
+    });
+  });
+
+  const lightbox = document.getElementById('photo-lightbox');
+  const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement | null;
+  const lightboxCaption = document.getElementById('lightbox-caption');
+  const lightboxClose = document.getElementById('lightbox-close');
+
+  function openLightbox(src: string, caption: string) {
+    if (!lightbox || !lightboxImg) return;
+    lightboxImg.src = src;
+    lightboxImg.alt = caption;
+    if (lightboxCaption) lightboxCaption.textContent = caption;
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    if (!lightbox) return;
+    lightbox.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('[data-lightbox-src]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const src = btn.getAttribute('data-lightbox-src') || '';
+      const caption = btn.getAttribute('data-lightbox-caption') || '';
+      openLightbox(src, caption);
+    });
+  });
+
+  lightboxClose?.addEventListener('click', closeLightbox);
+  lightbox?.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lightbox?.getAttribute('aria-hidden') === 'false') {
+      closeLightbox();
+    }
+  });
+</script>
+
+<style>
+  .page-wrap {
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .page-header {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .page-title {
+    font-size: clamp(1.65rem, 3vw, 2.25rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  .page-desc {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    max-width: 68ch;
+    line-height: 1.65;
+  }
+
+  .page-desc strong {
+    color: var(--text-primary);
+  }
+
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .filter-btn {
+    height: 36px;
+    padding: 0 0.95rem;
+    border-radius: var(--radius-pill);
+    background-color: var(--bg-surface-elevated);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 500;
+    transition: all 0.16s ease;
+  }
+
+  .filter-btn:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-surface-hover);
+  }
+
+  .filter-btn.active {
+    background-color: var(--accent-de-soft);
+    border-color: color-mix(in srgb, var(--accent-de) 38%, transparent);
+    color: var(--accent-de);
+    font-weight: 600;
+  }
+
+  .timeline-section {
+    padding: 1.75rem;
+  }
+
+  .milestone-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .milestone-card {
+    padding: 1.25rem;
+    border-radius: var(--radius-md);
+    background-color: var(--bg-surface-elevated);
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .ms-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .ms-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .ms-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background-color: var(--accent-de-soft);
+    color: var(--accent-de);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .ms-period {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent-de);
+  }
+
+  .ms-article-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent-future);
+    padding: 0.2rem 0.55rem;
+    border-radius: var(--radius-pill);
+    background-color: var(--accent-future-soft);
+    white-space: nowrap;
+  }
+
+  .ms-title {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--text-primary);
+  }
+
+  .ms-org {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  .ms-desc {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .ms-gallery {
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .ms-gallery-label {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .ms-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .ms-photo-btn {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-default);
+    background-color: var(--bg-base);
+    padding: 0;
+  }
+
+  .ms-photo-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.25s ease;
+  }
+
+  .ms-photo-btn:hover img {
+    transform: scale(1.06);
+  }
+
+  .ms-photo-more {
+    position: absolute;
+    inset: 0;
+    background: rgba(9, 11, 16, 0.74);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Lightbox */
+  .lightbox-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    background: rgba(6, 8, 12, 0.9);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .lightbox-backdrop[aria-hidden='false'] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .lightbox-content {
+    position: relative;
+    max-width: 960px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .lightbox-close-btn {
+    align-self: flex-end;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: 36px;
+    padding: 0 0.85rem;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+  }
+
+  .lightbox-img {
+    max-width: 100%;
+    max-height: 78vh;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-default);
+    object-fit: contain;
+  }
+
+  .lightbox-caption {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: #cbd5e1;
+    text-align: center;
+  }
+
+  @media (max-width: 900px) {
+    .milestone-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

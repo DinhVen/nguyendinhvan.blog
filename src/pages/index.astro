@@ -72,7 +72,7 @@ const milestonesWithPhotos = STUDENT_MILESTONES.map((item) => {
 
         <div class="hero-cta-col">
           <a href="/projects" class="btn-primary">
-            <span>Xem Dự án & Kỷ niệm</span>
+            <span>Xem Dự án & Tool</span>
             <Icon name="arrow-right" size={16} />
           </a>
           <a href="/blog" class="btn-secondary">
@@ -121,10 +121,10 @@ const milestonesWithPhotos = STUDENT_MILESTONES.map((item) => {
       <section class="bento-card projects-col reveal-item" style="--reveal-delay: 60ms" aria-label="Dự án kỹ thuật">
         <div class="section-head">
           <div class="section-head-text">
-            <h2 class="section-heading">Dự án Kỹ thuật đã thực hiện</h2>
-            <p class="section-sub">2 đồ án chuyên ngành Hệ thống Thông tin & Kỹ thuật Dữ liệu</p>
+            <h2 class="section-heading">Dự án Kỹ thuật & Bộ Công cụ</h2>
+            <p class="section-sub">Đồ án chuyên ngành, kiến trúc Data Pipeline, AI & danh mục Tool</p>
           </div>
-          <a href="/projects" class="section-action-link">Xem chi tiết</a>
+          <a href="/projects" class="section-action-link">Xem Dự án & Tool</a>
         </div>
 
         <div class="home-projects-list">
@@ -198,14 +198,14 @@ const milestonesWithPhotos = STUDENT_MILESTONES.map((item) => {
           <h2 class="section-heading">9 Cột mốc Học tập, Thực tập & Hoạt động</h2>
           <p class="section-sub">Mỗi cột mốc đính kèm album ảnh tư liệu thật và bài báo phóng sự chi tiết</p>
         </div>
-        <a href="/projects" class="section-action-link">Xem đủ 9 mốc</a>
+        <a href="/milestones" class="section-action-link">Xem đủ 9 mốc</a>
       </div>
 
       <div class="home-milestones-grid">
         {
           milestonesWithPhotos.slice(0, 6).map((item, idx) => (
             <a
-              href={item.blogUrl || '/projects'}
+              href={item.blogUrl || '/milestones'}
               class="home-milestone-row reveal-item"
               style={`--reveal-delay: ${idx * 50}ms`}
             >

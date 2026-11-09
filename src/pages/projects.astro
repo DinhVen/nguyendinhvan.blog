@@ -1,68 +1,141 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
-import { SITE_PROFILE, PROJECTS, STUDENT_MILESTONES } from '../data/profile';
-import { getEventImages } from '../utils/event-images';
+import { SITE_PROFILE, PROJECTS, TECH_TOOLS } from '../data/profile';
 
-function getMilestoneIcon(type: string) {
-  if (type === 'education') return 'graduation';
-  if (type === 'internship') return 'briefcase';
-  if (type === 'achievement') return 'award';
-  return 'user';
-}
-
-const milestonesWithPhotos = STUDENT_MILESTONES.map((item) => ({
-  ...item,
-  photos: getEventImages(item.imageFolder),
-}));
+const quickTags = [
+  'Python',
+  'PySpark',
+  'Apache Spark',
+  'Kafka',
+  'Debezium',
+  'CLIP',
+  'FAISS',
+  'SQL Server',
+  'Docker',
+  'Amazon S3',
+];
 ---
 
 <BaseLayout
-  title={`Đời sinh viên, Thực tập & Dự án — ${SITE_PROFILE.name}`}
-  description="Quãng đời sinh viên tại Trường Đại học Quy Nhơn, kỳ thực tập tại TMA Solutions Bình Định và các dự án đã hoàn thành của Nguyễn Đình Văn."
+  title={`Dự án Kỹ thuật & Công cụ (Tools) — ${SITE_PROFILE.name}`}
+  description="Danh mục Dự án Kỹ thuật (Data Engineering, AI & Computer Vision) và bộ Công cụ / Công nghệ thực chiến của Nguyễn Đình Văn."
   activeNav="projects"
 >
   <div class="container page-wrap">
-    <!-- Page Header -->
-    <header class="page-header bento-card reveal-item">
+    <!-- Page Header + Instant Search & Filter Toolbar -->
+    <header class="page-header bento-card">
       <div class="section-eyebrow">
-        <Icon name="graduation" size={15} />
-        <span>HỌC VẤN • THỰC TẬP • THÀNH TÍCH • DỰ ÁN</span>
+        <Icon name="terminal" size={15} />
+        <span>PROJECTS & ENGINEERING TOOLS DIRECTORY</span>
       </div>
-      <h1 class="page-title">Chặng đường Sinh viên CNTT & Các dự án đã làm</h1>
+      <h1 class="page-title">Dự án Kỹ thuật & Bộ Công cụ (Tools)</h1>
       <p class="page-desc">
-        Tổng hợp chân thực quãng đời sinh viên tại <strong>Trường Đại học Quy Nhơn (09/2022 – 30/07/2026)</strong>, trải nghiệm thực tập tại <strong>TMA Solutions Bình Định</strong>, công việc tại <strong>Trung tâm Lưu trữ lịch sử tỉnh Gia Lai</strong> và 2 đồ án chuyên ngành.
+        Nơi tổng hợp riêng các <strong>đồ án chuyên ngành, hệ thống Data Pipeline, ứng dụng AI</strong> cùng <strong>danh mục công cụ, cơ sở dữ liệu và hạ tầng</strong> đã triển khai thực tế. Hỗ trợ tìm kiếm và lọc nhanh theo tên dự án hoặc công nghệ.
       </p>
+
+      <!-- Search & Filter Controls -->
+      <div class="search-toolbar">
+        <div class="search-input-wrap">
+          <Icon name="search" size={16} />
+          <input
+            type="search"
+            id="project-tool-search"
+            class="search-input"
+            placeholder="Tìm dự án, tool hoặc công nghệ (VD: Spark, Kafka, CLIP, FAISS, Docker, SQL...)"
+            aria-label="Tìm kiếm dự án hoặc công cụ"
+          />
+          <button type="button" id="clear-search-btn" class="clear-search-btn" hidden>
+            Xóa lọc
+          </button>
+        </div>
+
+        <div class="filter-tabs" role="tablist" aria-label="Lọc theo phân loại">
+          <button type="button" class="filter-tab active" data-cat-filter="all">
+            Tất cả ({PROJECTS.length} Dự án · {TECH_TOOLS.length} Bộ Tool)
+          </button>
+          <button type="button" class="filter-tab" data-cat-filter="data">
+            Data Engineering & Streaming
+          </button>
+          <button type="button" class="filter-tab" data-cat-filter="ai">
+            AI & Computer Vision
+          </button>
+          <button type="button" class="filter-tab" data-cat-filter="infra">
+            Database, Docker & Cloud
+          </button>
+        </div>
+
+        <div class="quick-tags-row" aria-label="Từ khóa công nghệ phổ biến">
+          <span class="quick-tags-label">Lọc nhanh theo Tool:</span>
+          {quickTags.map((tag) => (
+            <button type="button" class="quick-tag-chip" data-quick-tag={tag}>
+              {tag}
+            </button>
+          ))}
+        </div>
+      </div>
     </header>
 
-    <!-- Section 1: 2 Real Projects from CV -->
-    <section class="projects-stack" aria-label="2 Dự án kỹ thuật">
+    <!-- Empty State when Search has 0 matches -->
+    <div id="search-empty-state" class="bento-card empty-state" hidden>
+      <p class="empty-title">Không tìm thấy dự án hoặc công cụ khớp với từ khóa đang nhập.</p>
+      <button type="button" id="reset-empty-btn" class="btn-secondary">Hiển thị lại tất cả Dự án & Tool</button>
+    </div>
+
+    <!-- Section 1: Technical Projects -->
+    <section id="projects-section" class="projects-stack" aria-label="Danh sách Dự án Kỹ thuật">
+      <div class="section-heading-bar">
+        <div>
+          <div class="section-eyebrow">
+            <Icon name="folder" size={14} />
+            <span>REPOSITORIES & SYSTEM ARCHITECTURE</span>
+          </div>
+          <h2 class="section-title">Các Dự án Kỹ thuật đã thực hiện</h2>
+        </div>
+        <span id="project-count-badge" class="badge badge-de">{PROJECTS.length} dự án</span>
+      </div>
+
       {
         PROJECTS.map((project, index) => (
-          <article class="bento-card project-detail-card reveal-item" style={`--reveal-delay: ${index * 80}ms`}>
+          <article
+            class="bento-card project-detail-card searchable-item"
+            data-item-kind="project"
+            data-item-cat={project.category}
+            data-search-text={`${project.title} ${project.role} ${project.summary} ${project.techStack.join(' ')} ${project.highlights.join(' ')}`.toLowerCase()}
+          >
             <div class="project-header">
               <div class="project-title-block">
                 <div class="project-meta-line">
-                  <span class="project-index">DỰ ÁN 0{index + 1}</span>
+                  <span class="project-index">PROJECT 0{index + 1}</span>
                   <span class="project-sep">·</span>
                   <span class="project-role">{project.role}</span>
                   <span class="project-sep">·</span>
                   <span class="project-period">{project.period}</span>
                 </div>
-                <h2 class="project-name">
+                <h3 class="project-name">
                   <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" class="project-name-link">
                     <span>{project.title}</span>
                   </a>
-                </h2>
+                </h3>
               </div>
+
               <div class="project-header-right">
-                <span class="badge badge-de">{project.status}</span>
+                <span class="badge badge-de">{project.categoryLabel}</span>
+                <button
+                  type="button"
+                  class="clone-btn"
+                  data-clone-cmd={`git clone ${project.githubUrl}.git`}
+                  title="Sao chép lệnh git clone"
+                >
+                  <Icon name="terminal" size={14} />
+                  <span class="clone-btn-text">git clone</span>
+                </button>
                 <a
                   href={project.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   class="github-btn"
-                  title={`Mở repo GitHub: ${project.title}`}
+                  title={`Mở mã nguồn GitHub: ${project.title}`}
                 >
                   <Icon name="github" size={15} />
                   <span>Mã nguồn GitHub</span>
@@ -75,7 +148,7 @@ const milestonesWithPhotos = STUDENT_MILESTONES.map((item) => ({
             <div class="pipeline-diagram-box">
               <div class="diagram-label">
                 <Icon name="pipeline" size={14} />
-                <span>LUỒNG XỬ LÝ CỦA HỆ THỐNG</span>
+                <span>LUỒNG KIẾN TRÚC & XỬ LÝ HỆ THỐNG</span>
               </div>
               <div class="diagram-nodes">
                 {project.architectureFlow.map((node, i) => (
@@ -89,7 +162,7 @@ const milestonesWithPhotos = STUDENT_MILESTONES.map((item) => ({
 
             <div class="project-bottom-grid">
               <div class="impact-block">
-                <h3 class="sub-label">Những công việc đã thực hiện</h3>
+                <h4 class="sub-label">Chi tiết triển khai kỹ thuật</h4>
                 <ul class="impact-list">
                   {project.highlights.map((item) => (
                     <li>{item}</li>
@@ -98,12 +171,21 @@ const milestonesWithPhotos = STUDENT_MILESTONES.map((item) => ({
               </div>
 
               <div class="stack-block">
-                <h3 class="sub-label">Công nghệ chính</h3>
+                <h4 class="sub-label">Công cụ & Công nghệ trong dự án</h4>
                 <div class="stack-tags">
-                  {project.techStack.slice(0, 6).map((tech) => (
-                    <span class="badge badge-neutral">{tech}</span>
+                  {project.techStack.map((tech) => (
+                    <button type="button" class="badge badge-neutral stack-filter-trigger" data-quick-tag={tech}>
+                      {tech}
+                    </button>
                   ))}
                 </div>
+                {project.articleUrl && (
+                  <a href={project.articleUrl} class="project-article-link">
+                    <Icon name="book" size={14} />
+                    <span>Đọc bài viết về quá trình thực hiện dự án</span>
+                    <Icon name="arrow-right" size={13} />
+                  </a>
+                )}
               </div>
             </div>
           </article>
@@ -111,497 +193,647 @@ const milestonesWithPhotos = STUDENT_MILESTONES.map((item) => ({
       }
     </section>
 
-    <!-- Section 2: 9 Student Life, Internship & Achievements Milestones -->
-    <section class="timeline-section bento-card reveal-item" aria-label="9 Cột mốc quãng đời sinh viên và thực tập">
-      <div class="section-eyebrow">
-        <Icon name="award" size={15} />
-        <span>DẤU ẤN GIẢNG ĐƯỜNG & DOANH NGHIỆP (9 CỘT MỐC)</span>
+    <!-- Section 2: Engineering Tools & Ecosystem Directory -->
+    <section id="tools-section" class="tools-section bento-card" aria-label="Danh mục Công cụ và Công nghệ">
+      <div class="section-heading-bar">
+        <div>
+          <div class="section-eyebrow">
+            <Icon name="terminal" size={14} />
+            <span>TECH STACK & TOOLKIT DIRECTORY</span>
+          </div>
+          <h2 class="section-title">Danh mục Công cụ & Công nghệ thực chiến</h2>
+        </div>
+        <span id="tool-count-badge" class="badge badge-future">{TECH_TOOLS.length} bộ công cụ</span>
       </div>
-      <h2 class="section-title">Học tập, Thực tập & Hoạt động Sinh viên</h2>
 
-      <div class="milestone-grid">
+      <div class="tools-grid">
         {
-          milestonesWithPhotos.map((item, idx) => (
-            <div class="milestone-card reveal-item" style={`--reveal-delay: ${(idx % 2) * 60}ms`}>
-              <div class="ms-header">
-                <div class="ms-header-left">
-                  <span class="ms-icon">
-                    <Icon name={getMilestoneIcon(item.type)} size={16} />
-                  </span>
-                  <span class="ms-period">{item.period}</span>
-                </div>
-                {item.blogUrl && (
-                  <a href={item.blogUrl} class="ms-article-link">
-                    <span>Đọc bài báo</span>
-                    <Icon name="arrow-right" size={13} />
-                  </a>
-                )}
+          TECH_TOOLS.map((tool) => (
+            <article
+              class="tool-card searchable-item"
+              data-item-kind="tool"
+              data-item-cat={tool.category === 'db' ? 'infra' : tool.category}
+              data-search-text={`${tool.name} ${tool.categoryLabel} ${tool.purpose} ${tool.usedIn} ${tool.tags.join(' ')}`.toLowerCase()}
+            >
+              <div class="tool-top">
+                <span class="badge badge-de">{tool.categoryLabel}</span>
+                <a
+                  href={tool.relatedUrl}
+                  target={tool.relatedUrl.startsWith('http') ? '_blank' : undefined}
+                  rel={tool.relatedUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
+                  class="tool-link"
+                >
+                  <span>Xem dự án áp dụng</span>
+                  <Icon name="arrow-right" size={13} />
+                </a>
               </div>
 
-              <h3 class="ms-title" title={item.title}>{item.title}</h3>
-              <div class="ms-org" title={item.organization}>{item.organization}</div>
-              <p class="ms-desc">{item.description}</p>
+              <h3 class="tool-name">{tool.name}</h3>
+              <p class="tool-purpose">{tool.purpose}</p>
 
-              {item.photos.length > 0 && (
-                <div class="ms-gallery">
-                  <div class="ms-gallery-label">
-                    <Icon name="folder" size={13} />
-                    <span>Album tư liệu ({item.photos.length} ảnh)</span>
-                  </div>
-                  <div class="ms-photo-grid">
-                    {item.photos.slice(0, 4).map((photoUrl, pIdx) => (
-                      <button
-                        type="button"
-                        class="ms-photo-btn"
-                        data-lightbox-src={photoUrl}
-                        data-lightbox-caption={`${item.title} — Ảnh ${pIdx + 1}/${item.photos.length}`}
-                        aria-label={`Xem ảnh ${pIdx + 1} của ${item.title}`}
-                      >
-                        <img src={photoUrl} alt={`${item.title} - ảnh ${pIdx + 1}`} />
-                        {pIdx === 3 && item.photos.length > 4 && (
-                          <span class="ms-photo-more">+{item.photos.length - 4}</span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          ))
-        }
-      </div>
-    </section>
+              <div class="tool-context">
+                <span class="tool-context-label">Áp dụng thực tế:</span>
+                <span class="tool-context-val">{tool.usedIn}</span>
+              </div>
 
-    <!-- Section 3: Skills Matrix from CV -->
-    <section class="stack-matrix-card bento-card reveal-item" aria-label="Kỹ năng từ CV">
-      <div class="section-eyebrow">
-        <Icon name="terminal" size={15} />
-        <span>KỸ NĂNG TÍCH LŨY (SKILLS)</span>
-      </div>
-      <h2 class="matrix-title">Nền tảng kỹ thuật & kỹ năng làm việc</h2>
-      <div class="matrix-grid">
-        {
-          SITE_PROFILE.coreStack.map((group) => (
-            <div class="matrix-col">
-              <h3 class="matrix-group-name">{group.group}</h3>
-              <div class="matrix-items">
-                {group.items.map((item) => (
-                  <span class="matrix-item">{item}</span>
+              <div class="tool-tags">
+                {tool.tags.map((tag) => (
+                  <button type="button" class="tool-tag-chip" data-quick-tag={tag}>
+                    {tag}
+                  </button>
                 ))}
               </div>
-            </div>
+            </article>
           ))
         }
       </div>
     </section>
   </div>
-
-  <style>
-    .page-wrap {
-      padding-top: 1.75rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-    }
-
-    .page-title {
-      font-size: clamp(1.5rem, 2.6vw, 2rem);
-      font-weight: 700;
-      letter-spacing: -0.025em;
-      margin-bottom: 0.45rem;
-    }
-
-    .page-desc {
-      font-size: 0.9375rem;
-      color: var(--text-secondary);
-      max-width: 72ch;
-    }
-
-    .projects-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-    }
-
-    .project-detail-card {
-      display: flex;
-      flex-direction: column;
-      gap: 1.15rem;
-    }
-
-    .project-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .project-title-block {
-      min-width: 0;
-    }
-
-    .project-meta-line {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.45rem;
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-bottom: 0.25rem;
-    }
-
-    .project-index {
-      color: var(--accent-de);
-      font-weight: 600;
-    }
-
-    .project-role {
-      color: var(--text-secondary);
-    }
-
-    .project-name {
-      font-size: 1.25rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .project-name-link:hover {
-      color: var(--accent-de);
-    }
-
-    .project-header-right {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-      min-width: 0;
-    }
-
-    .github-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      height: 36px;
-      padding: 0 0.85rem;
-      border-radius: var(--radius-sm);
-      background-color: var(--bg-surface-elevated);
-      border: 1px solid var(--border-default);
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: var(--text-primary);
-      white-space: nowrap;
-      transition: border-color 0.15s ease, background-color 0.15s ease;
-    }
-
-    .github-btn:hover {
-      background-color: var(--bg-surface-hover);
-      color: var(--accent-de);
-    }
-
-    .project-desc {
-      font-size: 0.9375rem;
-      color: var(--text-secondary);
-      max-width: 76ch;
-    }
-
-    .pipeline-diagram-box {
-      padding: 1rem;
-      border-radius: var(--radius-md);
-      background-color: var(--bg-surface-elevated);
-      border: 1px solid var(--border-subtle);
-    }
-
-    .diagram-label {
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-bottom: 0.75rem;
-    }
-
-    .diagram-nodes {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 0.5rem;
-    }
-
-    .diagram-node {
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      padding: 0.55rem 0.65rem;
-      border-radius: var(--radius-sm);
-      background-color: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      font-size: 0.75rem;
-      min-width: 0;
-    }
-
-    .node-step {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--accent-de);
-      flex-shrink: 0;
-    }
-
-    .node-title {
-      font-weight: 500;
-      color: var(--text-primary);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .project-bottom-grid {
-      display: grid;
-      grid-template-columns: 1.5fr 1fr;
-      gap: 1.25rem;
-    }
-
-    .sub-label {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      margin-bottom: 0.6rem;
-    }
-
-    .impact-list {
-      padding-left: 1.15rem;
-      color: var(--text-secondary);
-      font-size: 0.875rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-
-    .stack-tags {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.45rem;
-    }
-
-    .stack-tags .badge {
-      justify-content: center;
-    }
-
-    /* Milestones Grid */
-    .section-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-    }
-
-    .milestone-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-    }
-
-    .milestone-card {
-      padding: 1.15rem;
-      border-radius: var(--radius-md);
-      background-color: var(--bg-surface-elevated);
-      border: 1px solid var(--border-subtle);
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      min-width: 0;
-    }
-
-    .ms-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-    }
-
-    .ms-header-left {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      min-width: 0;
-    }
-
-    .ms-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background-color: var(--bg-surface);
-      border: 1px solid var(--border-default);
-      color: var(--accent-de);
-      flex-shrink: 0;
-    }
-
-    .ms-period {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      white-space: nowrap;
-    }
-
-    .ms-article-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      height: 32px;
-      padding: 0 0.65rem;
-      border-radius: var(--radius-sm);
-      background-color: var(--bg-surface);
-      border: 1px solid var(--border-default);
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: var(--accent-de);
-      white-space: nowrap;
-      flex-shrink: 0;
-      transition: border-color 0.15s ease, background-color 0.15s ease;
-    }
-
-    .ms-article-link:hover {
-      background-color: var(--bg-surface-hover);
-    }
-
-    .ms-title {
-      font-size: 0.9375rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .ms-org {
-      font-size: 0.75rem;
-      color: var(--accent-de);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .ms-desc {
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-      line-height: 1.55;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .ms-gallery {
-      margin-top: auto;
-      padding-top: 0.75rem;
-      border-top: 1px solid var(--border-subtle);
-    }
-
-    .ms-gallery-label {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-bottom: 0.5rem;
-    }
-
-    .ms-photo-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0.45rem;
-    }
-
-    .ms-photo-btn {
-      position: relative;
-      aspect-ratio: 4 / 3;
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-      border: 1px solid var(--border-default);
-      background-color: var(--bg-surface);
-    }
-
-    .ms-photo-btn img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .ms-photo-more {
-      position: absolute;
-      inset: 0;
-      background-color: rgba(9, 11, 16, 0.72);
-      color: #ffffff;
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Skills Matrix */
-    .matrix-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-    }
-
-    .matrix-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0.85rem;
-    }
-
-    .matrix-col {
-      padding: 1rem;
-      border-radius: var(--radius-md);
-      background-color: var(--bg-surface-elevated);
-      border: 1px solid var(--border-subtle);
-    }
-
-    .matrix-group-name {
-      font-size: 0.8125rem;
-      font-weight: 600;
-      color: var(--accent-de);
-      margin-bottom: 0.65rem;
-    }
-
-    .matrix-items {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-    }
-
-    @media (max-width: 1023px) {
-      .diagram-nodes {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .milestone-grid,
-      .project-bottom-grid {
-        grid-template-columns: 1fr;
-      }
-      .matrix-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 639px) {
-      .diagram-nodes,
-      .matrix-grid {
-        grid-template-columns: 1fr;
-      }
-      .ms-photo-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-  </style>
 </BaseLayout>
+
+<script>
+  const searchInput = document.getElementById('project-tool-search') as HTMLInputElement | null;
+  const clearBtn = document.getElementById('clear-search-btn') as HTMLButtonElement | null;
+  const resetEmptyBtn = document.getElementById('reset-empty-btn') as HTMLButtonElement | null;
+  const emptyState = document.getElementById('search-empty-state');
+  const projectsSection = document.getElementById('projects-section');
+  const toolsSection = document.getElementById('tools-section');
+  const projectCountBadge = document.getElementById('project-count-badge');
+  const toolCountBadge = document.getElementById('tool-count-badge');
+
+  const catTabs = document.querySelectorAll<HTMLButtonElement>('[data-cat-filter]');
+  const quickTagBtns = document.querySelectorAll<HTMLButtonElement>('[data-quick-tag]');
+  const items = document.querySelectorAll<HTMLElement>('.searchable-item');
+
+  let activeCat = 'all';
+
+  function applyFilter() {
+    const query = (searchInput?.value || '').trim().toLowerCase();
+    if (clearBtn) {
+      clearBtn.hidden = query.length === 0 && activeCat === 'all';
+    }
+
+    let visibleProjects = 0;
+    let visibleTools = 0;
+
+    items.forEach((el) => {
+      const itemCat = el.getAttribute('data-item-cat') || '';
+      const itemKind = el.getAttribute('data-item-kind') || '';
+      const text = el.getAttribute('data-search-text') || '';
+
+      const matchCat = activeCat === 'all' || itemCat === activeCat;
+      const matchQuery = !query || text.includes(query);
+      const show = matchCat && matchQuery;
+
+      el.style.display = show ? 'flex' : 'none';
+      if (show) {
+        if (itemKind === 'project') visibleProjects++;
+        if (itemKind === 'tool') visibleTools++;
+      }
+    });
+
+    if (projectsSection) projectsSection.style.display = visibleProjects > 0 ? 'flex' : 'none';
+    if (toolsSection) toolsSection.style.display = visibleTools > 0 ? 'flex' : 'none';
+    if (projectCountBadge) projectCountBadge.textContent = `${visibleProjects} dự án`;
+    if (toolCountBadge) toolCountBadge.textContent = `${visibleTools} bộ công cụ`;
+
+    if (emptyState) {
+      emptyState.hidden = visibleProjects + visibleTools > 0;
+    }
+
+    quickTagBtns.forEach((btn) => {
+      const tagVal = (btn.getAttribute('data-quick-tag') || '').toLowerCase();
+      btn.classList.toggle('active', query.length > 0 && query === tagVal);
+    });
+  }
+
+  searchInput?.addEventListener('input', applyFilter);
+
+  catTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      activeCat = tab.getAttribute('data-cat-filter') || 'all';
+      catTabs.forEach((t) => t.classList.remove('active'));
+      tab.classList.add('active');
+      applyFilter();
+    });
+  });
+
+  quickTagBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tag = btn.getAttribute('data-quick-tag') || '';
+      if (!searchInput) return;
+      if (searchInput.value.trim().toLowerCase() === tag.toLowerCase()) {
+        searchInput.value = '';
+      } else {
+        searchInput.value = tag;
+      }
+      applyFilter();
+    });
+  });
+
+  function resetAllFilters() {
+    if (searchInput) searchInput.value = '';
+    activeCat = 'all';
+    catTabs.forEach((t) => t.classList.toggle('active', t.getAttribute('data-cat-filter') === 'all'));
+    applyFilter();
+  }
+
+  clearBtn?.addEventListener('click', resetAllFilters);
+  resetEmptyBtn?.addEventListener('click', resetAllFilters);
+
+  // Copy git clone button
+  document.querySelectorAll<HTMLButtonElement>('[data-clone-cmd]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const cmd = btn.getAttribute('data-clone-cmd') || '';
+      const label = btn.querySelector('.clone-btn-text');
+      try {
+        await navigator.clipboard.writeText(cmd);
+        if (label) label.textContent = 'Đã chép lệnh!';
+        setTimeout(() => {
+          if (label) label.textContent = 'git clone';
+        }, 1800);
+      } catch {}
+    });
+  });
+</script>
+
+<style>
+  .page-wrap {
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .page-header {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .page-title {
+    font-size: clamp(1.65rem, 3vw, 2.25rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  .page-desc {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    max-width: 68ch;
+    line-height: 1.65;
+  }
+
+  .page-desc strong {
+    color: var(--text-primary);
+  }
+
+  /* Search & Filter Toolbar */
+  .search-toolbar {
+    margin-top: 0.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .search-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    height: 46px;
+    padding: 0 1rem;
+    border-radius: var(--radius-md);
+    background-color: var(--bg-surface-elevated);
+    border: 1px solid var(--border-default);
+    color: var(--text-muted);
+    transition: border-color 0.16s ease;
+  }
+
+  .search-input-wrap:focus-within {
+    border-color: var(--accent-de);
+  }
+
+  .search-input {
+    flex: 1;
+    height: 100%;
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+
+  .search-input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .clear-search-btn {
+    height: 28px;
+    padding: 0 0.65rem;
+    border-radius: var(--radius-pill);
+    background-color: var(--accent-de-soft);
+    color: var(--accent-de);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .filter-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .filter-tab {
+    height: 36px;
+    padding: 0 0.95rem;
+    border-radius: var(--radius-pill);
+    background-color: var(--bg-surface-elevated);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 500;
+    transition: all 0.16s ease;
+  }
+
+  .filter-tab:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-surface-hover);
+  }
+
+  .filter-tab.active {
+    background-color: var(--accent-de-soft);
+    border-color: color-mix(in srgb, var(--accent-de) 40%, transparent);
+    color: var(--accent-de);
+    font-weight: 600;
+  }
+
+  .quick-tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .quick-tags-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-right: 0.25rem;
+  }
+
+  .quick-tag-chip,
+  .tool-tag-chip {
+    height: 26px;
+    padding: 0 0.6rem;
+    border-radius: 6px;
+    background-color: var(--bg-base);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    transition: all 0.15s ease;
+  }
+
+  .quick-tag-chip:hover,
+  .quick-tag-chip.active,
+  .tool-tag-chip:hover {
+    border-color: var(--accent-de);
+    color: var(--accent-de);
+    background-color: var(--accent-de-soft);
+  }
+
+  .empty-state[hidden],
+  .clear-search-btn[hidden] {
+    display: none !important;
+  }
+
+  .empty-state {
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .empty-title {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  /* Section Heading Bar */
+  .section-heading-bar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .section-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  /* Section 1: Projects Stack */
+  .projects-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .project-detail-card {
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .project-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .project-meta-line {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    margin-bottom: 0.375rem;
+  }
+
+  .project-index {
+    color: var(--accent-de);
+    font-weight: 700;
+  }
+
+  .project-sep {
+    color: var(--text-muted);
+  }
+
+  .project-role {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .project-period {
+    color: var(--text-muted);
+  }
+
+  .project-name {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .project-name-link:hover {
+    color: var(--accent-de);
+  }
+
+  .project-header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+  }
+
+  .clone-btn,
+  .github-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    height: 34px;
+    padding: 0 0.8rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--bg-surface-elevated);
+    border: 1px solid var(--border-default);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+    transition: background-color 0.16s ease, border-color 0.16s ease;
+  }
+
+  .clone-btn:hover,
+  .github-btn:hover {
+    background-color: var(--bg-surface-hover);
+    border-color: var(--accent-de);
+  }
+
+  .project-desc {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+
+  /* Architecture Pipeline Flow */
+  .pipeline-diagram-box {
+    padding: 1.15rem;
+    border-radius: var(--radius-md);
+    background-color: var(--bg-base);
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .diagram-label {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent-de);
+    letter-spacing: 0.05em;
+  }
+
+  .diagram-nodes {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.65rem;
+  }
+
+  .diagram-node {
+    padding: 0.7rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .node-step {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent-de);
+  }
+
+  .node-title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.35;
+  }
+
+  .project-bottom-grid {
+    display: grid;
+    grid-template-columns: 1.45fr 1fr;
+    gap: 1.25rem;
+  }
+
+  .sub-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 0.65rem;
+  }
+
+  .impact-list {
+    padding-left: 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .stack-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .stack-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .stack-filter-trigger {
+    cursor: pointer;
+  }
+
+  .stack-filter-trigger:hover {
+    border-color: var(--accent-de);
+    color: var(--accent-de);
+  }
+
+  .project-article-link {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent-future);
+  }
+
+  /* Section 2: Tools Directory */
+  .tools-section {
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .tool-card {
+    padding: 1.25rem;
+    border-radius: var(--radius-md);
+    background-color: var(--bg-surface-elevated);
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .tool-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .tool-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent-de);
+  }
+
+  .tool-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .tool-purpose {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .tool-context {
+    padding: 0.55rem 0.75rem;
+    border-radius: 8px;
+    background-color: var(--bg-base);
+    border: 1px solid var(--border-subtle);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .tool-context-label {
+    color: var(--text-muted);
+  }
+
+  .tool-context-val {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .tool-tags {
+    margin-top: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  @media (max-width: 960px) {
+    .diagram-nodes {
+      grid-template-columns: 1fr;
+    }
+    .project-bottom-grid,
+    .tools-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -3,12 +3,26 @@ export interface ProjectItem {
   title: string;
   period: string;
   role: string;
+  category: 'data' | 'ai' | 'web';
+  categoryLabel: string;
   githubUrl: string;
+  articleUrl?: string;
   summary: string;
   highlights: string[];
   architectureFlow: string[];
   techStack: string[];
   status: string;
+}
+
+export interface TechToolItem {
+  id: string;
+  name: string;
+  category: 'data' | 'ai' | 'db' | 'infra';
+  categoryLabel: string;
+  purpose: string;
+  usedIn: string;
+  relatedUrl: string;
+  tags: string[];
 }
 
 export interface StudentMilestone {
@@ -194,7 +208,10 @@ export const PROJECTS: ProjectItem[] = [
     title: 'E-commerce User Behavior Analytics',
     period: '03/2026',
     role: 'Đồ án / Dự án Kỹ thuật Dữ liệu',
+    category: 'data',
+    categoryLabel: 'Data Engineering',
     githubUrl: 'https://github.com/DinhVen/E-commerce-User-Behavior-Analytics',
+    articleUrl: '/blog/ky-thuc-tap-tai-tma-solutions-va-nhung-du-an-thoi-sinh-vien',
     summary:
       'Xây dựng đường ống dữ liệu (Data Pipeline) hoàn chỉnh cả Batch và Streaming cho hệ thống thương mại điện tử, kết hợp thu thập dữ liệu thay đổi (CDC) và thiết kế Data Warehouse.',
     highlights: [
@@ -217,7 +234,10 @@ export const PROJECTS: ProjectItem[] = [
     title: 'Vietnamese Traffic Sign Retrieval System',
     period: '04/2026',
     role: 'Đồ án Ứng dụng AI & Web',
+    category: 'ai',
+    categoryLabel: 'AI & Computer Vision',
     githubUrl: 'https://github.com/DinhVen/GTVN',
+    articleUrl: '/blog/ky-thuc-tap-tai-tma-solutions-va-nhung-du-an-thoi-sinh-vien',
     summary:
       'Hệ thống tra cứu biển báo giao thông Việt Nam bằng hình ảnh sử dụng mô hình ngôn ngữ-hình ảnh CLIP và thư viện tìm kiếm vector FAISS, kèm giao diện web trực quan.',
     highlights: [
@@ -234,6 +254,69 @@ export const PROJECTS: ProjectItem[] = [
     ],
     techStack: ['Python', 'CLIP', 'FAISS', 'React', 'Vite', 'JavaScript'],
     status: 'Hoàn thành (04/2026)',
+  },
+];
+
+export const TECH_TOOLS: TechToolItem[] = [
+  {
+    id: 'apache-spark-pyspark',
+    name: 'Apache Spark & PySpark',
+    category: 'data',
+    categoryLabel: 'Data Engineering',
+    purpose: 'Xử lý dữ liệu phân tán quy mô lớn (Batch & Structured Streaming), làm sạch và biến đổi dữ liệu giữa các tầng Bronze, Silver, Gold.',
+    usedIn: 'Thực tập TMA Solutions Lab 6 & Dự án E-commerce Analytics',
+    relatedUrl: 'https://github.com/DinhVen/E-commerce-User-Behavior-Analytics',
+    tags: ['PySpark', 'Spark Streaming', 'ETL/ELT', 'Medallion'],
+  },
+  {
+    id: 'kafka-debezium-cdc',
+    name: 'Apache Kafka & Debezium CDC',
+    category: 'data',
+    categoryLabel: 'Streaming & CDC',
+    purpose: 'Thu thập dữ liệu thay đổi theo thời gian thực (Change Data Capture) từ cơ sở dữ liệu giao dịch và truyền tải qua hệ thống hàng đợi sự kiện.',
+    usedIn: 'Dự án E-commerce User Behavior Analytics & Thực tập TMA',
+    relatedUrl: 'https://github.com/DinhVen/E-commerce-User-Behavior-Analytics',
+    tags: ['Kafka', 'Debezium', 'Real-time CDC', 'Event Streaming'],
+  },
+  {
+    id: 'clip-faiss-vector',
+    name: 'OpenAI CLIP & FAISS Vector Search',
+    category: 'ai',
+    categoryLabel: 'AI & Retrieval Tool',
+    purpose: 'Trích xuất vector đặc trưng đa phương thức (ảnh – văn bản) và truy vấn tương đồng tốc độ cao trên tập dữ liệu biển báo giao thông Việt Nam.',
+    usedIn: 'Dự án Vietnamese Traffic Sign Retrieval System (GTVN)',
+    relatedUrl: 'https://github.com/DinhVen/GTVN',
+    tags: ['CLIP', 'FAISS', 'Vector Search', 'Computer Vision'],
+  },
+  {
+    id: 'sql-nosql-graph-db',
+    name: 'SQL Server, MySQL, MongoDB & Neo4j',
+    category: 'db',
+    categoryLabel: 'Database & Warehouse',
+    purpose: 'Thiết kế cơ sở dữ liệu quan hệ, NoSQL và đồ thị; xây dựng Data Warehouse theo mô hình Dimensional Modeling (Star Schema & SCD Type 2).',
+    usedIn: 'Chuyên ngành Hệ thống Thông tin (ĐH Quy Nhơn) & TMA Lab 6',
+    relatedUrl: '/blog/ky-thuc-tap-tai-tma-solutions-va-nhung-du-an-thoi-sinh-vien',
+    tags: ['SQL Server', 'MySQL', 'MongoDB', 'Neo4j', 'SCD Type 2'],
+  },
+  {
+    id: 'docker-linux-env',
+    name: 'Docker & Linux Containerization',
+    category: 'infra',
+    categoryLabel: 'DevOps & Hạ tầng',
+    purpose: 'Đóng gói và triển khai cụm dịch vụ Kafka, Spark, Debezium, SQL Server đồng nhất trên môi trường Linux/Windows container.',
+    usedIn: 'Thực tập TMA Solutions Bình Định & Các đồ án chuyên ngành',
+    relatedUrl: 'https://github.com/DinhVen/E-commerce-User-Behavior-Analytics',
+    tags: ['Docker', 'Docker Compose', 'Linux', 'Troubleshooting'],
+  },
+  {
+    id: 'aws-cloud-storage',
+    name: 'AWS (EC2, S3, RDS, Lambda) & Parquet',
+    category: 'infra',
+    categoryLabel: 'Cloud & Data Lake',
+    purpose: 'Lưu trữ dữ liệu phân lớp trên Amazon S3 theo định dạng cột Parquet tối ưu hiệu năng truy vấn và vận hành hạ tầng đám mây.',
+    usedIn: 'Dự án E-commerce User Behavior Analytics',
+    relatedUrl: 'https://github.com/DinhVen/E-commerce-User-Behavior-Analytics',
+    tags: ['Amazon S3', 'AWS EC2', 'AWS RDS', 'Parquet'],
   },
 ];
 
